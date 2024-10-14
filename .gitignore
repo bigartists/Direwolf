@@ -33,3 +33,4 @@ application.yaml
 .DS_Store/
 etc/*
 
+web/node_modules/

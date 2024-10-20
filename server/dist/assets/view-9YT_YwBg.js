@@ -1,0 +1,1 @@
+import{j as r,aa as e,T as t,n,aJ as i}from"./index-y_ehfMbC.js";function d({title:s="Blank"}){return r.jsxs(e,{maxWidth:"xl",children:[r.jsxs(t,{variant:"h4",children:[" ",s," "]}),r.jsx(n,{sx:{mt:5,width:1,height:320,borderRadius:2,bgcolor:a=>i(a.vars.palette.grey["500Channel"],.04),border:a=>`dashed 1px ${a.vars.palette.divider}`}})]})}export{d as B};

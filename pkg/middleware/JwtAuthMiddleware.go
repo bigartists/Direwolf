@@ -22,6 +22,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			"/api/v1/me":             true,
 			"/api/v1/register":       true,
 			"/api/v1/configurations": true,
+			"/api/v1/invoke":         true,
 			// 非 /api 开头的所有
 			//"/":                  true,
 			//"/favicon.ico":       true,

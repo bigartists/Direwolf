@@ -1,6 +1,7 @@
 /** **************************************
 * Fonts: app
 *************************************** */
+
 @import '@fontsource-variable/public-sans';
 
 @import '@fontsource/barlow/400.css';
@@ -21,6 +22,11 @@
 *************************************** */
 /* scrollbar */
 @import './components/scrollbar/styles.css';
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /** **************************************
 * Baseline

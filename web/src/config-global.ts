@@ -27,6 +27,7 @@ export type ConfigValue = {
   amplify: { userPoolId: string; userPoolWebClientId: string; region: string };
   auth0: { clientId: string; domain: string; callbackUrl: string };
   supabase: { url: string; key: string };
+  ACCESS_TOKEN: string;
 };
 
 // ----------------------------------------------------------------------
@@ -86,4 +87,9 @@ export const CONFIG: ConfigValue = {
     url: import.meta.env.VITE_SUPABASE_URL ?? '',
     key: import.meta.env.VITE_SUPABASE_ANON_KEY ?? '',
   },
+
+  /**
+   * sessionStorage key
+   */
+  ACCESS_TOKEN: 'APP_TOKEN',
 };

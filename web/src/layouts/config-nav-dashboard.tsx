@@ -6,9 +6,12 @@ import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
-const icon = (name: string) => (
-  <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/${name}.svg`} />
-);
+const icon = (name: string) => {
+  const src = `${CONFIG.assetsDir}/assets/icons/navbar/${name}.svg`;
+  console.log('🚀 ~ icon ~ src:', src);
+
+  return <SvgColor src={src} />;
+};
 
 const ICONS = {
   job: icon('ic-job'),
@@ -46,29 +49,46 @@ export const navData = [
    * Overview
    */
   {
-    subheader: 'Overview 6.0.0',
+    subheader: 'basic ability',
     items: [
-      { title: 'One', path: paths.dashboard.root, icon: ICONS.dashboard },
-      { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: paths.dashboard.three, icon: ICONS.analytics },
+      { title: 'Chats', path: paths.dashboard.root, icon: ICONS.dashboard },
+      { title: 'Models', path: paths.dashboard.two, icon: ICONS.ecommerce },
+      // { title: 'Batch inference', path: paths.dashboard.three, icon: ICONS.analytics },
     ],
   },
   /**
    * Management
    */
-  {
-    subheader: 'Management',
-    items: [
-      {
-        title: 'Group',
-        path: paths.dashboard.group.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Four', path: paths.dashboard.group.root },
-          { title: 'Five', path: paths.dashboard.group.five },
-          { title: 'Six', path: paths.dashboard.group.six },
-        ],
-      },
-    ],
-  },
+  // {
+  //   subheader: 'RAG',
+  //   items: [
+  //     { title: 'vector database', path: paths.dashboard.group.root, icon: ICONS.user },
+  //     { title: 'embedding Models', path: paths.dashboard.group.five, icon: ICONS.user },
+  //     { title: 'segmentation', path: paths.dashboard.group.five, icon: ICONS.user },
+  //     { title: 'recall', path: paths.dashboard.group.six, icon: ICONS.user },
+  //   ],
+  // },
+  // {
+  //   subheader: 'Agent',
+  //   items: [
+  //     { title: 'Debugger', path: paths.dashboard.group.root, icon: ICONS.user },
+  //     { title: 'App', path: paths.dashboard.group.five, icon: ICONS.user },
+  //     { title: 'Share', path: paths.dashboard.group.six, icon: ICONS.user },
+  //   ],
+  // },
+  // {
+  //   subheader: 'Agent',
+  //   items: [
+  //     {
+  //       title: 'Group',
+  //       path: paths.dashboard.group.root,
+  //       icon: ICONS.user,
+  //       children: [
+  //         { title: 'Four', path: paths.dashboard.group.root },
+  //         { title: 'Five', path: paths.dashboard.group.five },
+  //         { title: 'Six', path: paths.dashboard.group.six },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];

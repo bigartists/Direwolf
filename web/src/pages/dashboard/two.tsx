@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { BlankView } from 'src/sections/blank/view';
+import { ModelView } from 'src/sections/model/view';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <BlankView title="Page two" />
+      <ModelView title="模型列表" />
     </>
   );
 }

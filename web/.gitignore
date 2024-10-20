@@ -36,3 +36,8 @@ build
 .eslintcache
 .unimportedrc.json
 tsconfig.tsbuildinfo
+
+# api_key
+
+.api-key.ts
+src/.api-key.ts

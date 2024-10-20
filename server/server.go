@@ -3,9 +3,9 @@ package server
 import (
 	"fmt"
 	"github.com/bigartists/Direwolf/client"
+	"github.com/bigartists/Direwolf/internal/routers"
 	middlewares "github.com/bigartists/Direwolf/pkg/middleware"
 	"github.com/bigartists/Direwolf/pkg/validators"
-	"github.com/bigartists/Direwolf/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )

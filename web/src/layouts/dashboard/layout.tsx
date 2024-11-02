@@ -140,10 +140,10 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
                   />
                 )}
                 {/* -- Workspace popover -- */}
-                <WorkspacesPopover
+                {/* <WorkspacesPopover
                   data={_workspaces}
                   sx={{ color: 'var(--layout-nav-text-primary-color)' }}
-                />
+                /> */}
               </>
             ),
             rightArea: (
@@ -151,7 +151,7 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
                 {/* -- Language popover -- */}
-                <LanguagePopover
+                {/* <LanguagePopover
                   data={[
                     { value: 'en', label: 'English', countryCode: 'GB' },
                     { value: 'fr', label: 'French', countryCode: 'FR' },
@@ -159,11 +159,11 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
                     { value: 'cn', label: 'Chinese', countryCode: 'CN' },
                     { value: 'ar', label: 'Arabic', countryCode: 'SA' },
                   ]}
-                />
+                /> */}
                 {/* -- Notifications popover -- */}
                 <NotificationsDrawer data={_notifications} />
                 {/* -- Contacts popover -- */}
-                <ContactsPopover data={_contacts} />
+                {/* <ContactsPopover data={_contacts} /> */}
                 {/* -- Settings button -- */}
                 <SettingsButton />
                 {/* -- Account drawer -- */}
@@ -207,8 +207,8 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
         '--layout-nav-vertical-width': '300px',
         '--layout-nav-horizontal-height': '64px',
         '--layout-dashboard-content-pt': theme.spacing(1),
-        '--layout-dashboard-content-pb': theme.spacing(8),
-        '--layout-dashboard-content-px': theme.spacing(5),
+        '--layout-dashboard-content-pb': theme.spacing(4),
+        '--layout-dashboard-content-px': theme.spacing(4),
       }}
       sx={{
         [`& .${layoutClasses.hasSidebar}`]: {

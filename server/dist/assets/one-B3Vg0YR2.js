@@ -1,1 +1,0 @@
-import{j as e,H as t,C as a}from"./index-Dfmr8ry_.js";import{B as s}from"./view-DMS8lxya.js";const r={title:`Page one | Dashboard - ${a.appName}`};function o(){return e.jsxs(e.Fragment,{children:[e.jsx(t,{children:e.jsxs("title",{children:[" ",r.title]})}),e.jsx(s,{title:"Page one"})]})}export{o as default};

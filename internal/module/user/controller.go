@@ -1,19 +1,19 @@
 package user
 
 import (
-	"fmt"
 	"github.com/bigartists/Direwolf/config"
 	"github.com/bigartists/Direwolf/pkg/result"
 	. "github.com/bigartists/Direwolf/pkg/utils"
 	"github.com/gin-gonic/gin"
-	"io"
 	"time"
 )
 
-type UserController struct{}
+type UserController struct {
+	service IUserService
+}
 
-func NewUserController() *UserController {
-	return &UserController{}
+func ProvideUserController(service IUserService) *UserController {
+	return &UserController{service: service}
 }
 
 func (this *UserController) Login(c *gin.Context) {
@@ -25,7 +25,7 @@ func (this *UserController) Login(c *gin.Context) {
 	// 校验参数
 	result.Result(c.ShouldBindJSON(params)).Unwrap()
 
-	user, err := ServiceGetter.SignIn(params.Username, params.Password)
+	user, err := this.service.SignIn(params.Username, params.Password)
 	if err != nil {
 		ret := ResultWrapper(c)(nil, err.Error())(Error)
 		c.JSON(400, ret)
@@ -42,20 +42,30 @@ func (this *UserController) Login(c *gin.Context) {
 	c.JSON(200, ret)
 }
 
-//func (this *UserController) SignUp(c *gin.Context) {
-//	// 校验输入参数是否合法
-//	params := &dto.SignupRequest{}
-//	// 校验参数
-//	result.Result(c.ShouldBindJSON(params)).Unwrap()
-//
-//	err := ServiceGetter.SignUp(params.Email, params.Username, params.Password)
-//	if err != nil {
-//		ret := ResultWrapper(c)(nil, err.Error())(Error)
-//		c.JSON(400, ret)
-//	}
-//	ret := ResultWrapper(c)(true, "")(Created)
-//	c.JSON(201, ret)
-//}
+func (this *UserController) Register(c *gin.Context) {
+	// 校验输入参数是否合法
+
+	params := &RegisterRequest{}
+	// 校验参数
+	result.Result(c.ShouldBindJSON(params)).Unwrap()
+
+	err := this.service.Register(params.Email, params.Username, params.Password)
+	if err != nil {
+		ret := ResultWrapper(c)(nil, err.Error())(Error)
+		c.JSON(400, ret)
+		return
+	}
+
+	//// 生成 token
+	prikey := []byte(config.SysYamlconfig.Jwt.PrivateKey)
+	curTime := time.Now().Add(time.Second * 60 * 60 * 24)
+	token, _ := GenerateToken(0, prikey, curTime)
+
+	c.Set("token", token)
+
+	ret := ResultWrapper(c)(true, "")(Created)
+	c.JSON(201, ret)
+}
 
 func GetAuthUser(c *gin.Context) *User {
 	t, exist := c.Get("auth_user")
@@ -66,7 +76,7 @@ func GetAuthUser(c *gin.Context) *User {
 }
 
 func (this *UserController) UserList(c *gin.Context) {
-	ret := ResultWrapper(c)(ServiceGetter.GetUserList(), "")(OK)
+	ret := ResultWrapper(c)(this.service.GetUserList(), "")(OK)
 	c.JSON(200, ret)
 }
 
@@ -75,7 +85,7 @@ func (this *UserController) UserDetail(c *gin.Context) {
 		Id int64 `uri:"id" binding:"required"`
 	}{}
 	result.Result(c.ShouldBindUri(id)).Unwrap()
-	ret := ResultWrapper(c)(ServiceGetter.GetUserDetail(id.Id).Unwrap(), "")(OK)
+	ret := ResultWrapper(c)(this.service.GetUserDetail(id.Id).Unwrap(), "")(OK)
 	c.JSON(200, ret)
 }
 
@@ -93,36 +103,16 @@ type LLMRequest struct {
 	Params  map[string]interface{} `json:"params" binding:"required"`
 }
 
-func (this *UserController) Invoke(c *gin.Context) {
-	var req LLMRequest
-	result.Result(c.ShouldBindJSON(&req)).Unwrap()
-
-	c.Header("Content-Type", "text/event-stream")
-	c.Header("Cache-Control", "no-cache")
-	c.Header("Connection", "keep-alive")
-	c.Header("Transfer-Encoding", "chunked")
-
-	responseChan, err := ServiceGetter.InvokeModel(c.Request.Context(), req)
-	if err != nil {
-		c.SSEvent("error", err.Error())
-		return
-	}
-
-	c.Stream(func(w io.Writer) bool {
-		if msg, ok := <-responseChan; ok {
-			fmt.Println("msg: ", msg)
-			c.SSEvent("", msg)
-			return true
-		}
-		return false
-	})
-}
-
 func (this *UserController) Build(r *gin.RouterGroup) {
 	r.POST("/login", this.Login)
-	//r.POST("/register", this.SignUp)
+	r.POST("/register", this.Register)
 	r.GET("/users", this.UserList)
 	r.GET("/user/:id", this.UserDetail)
 	r.GET("/me", this.GetMe)
-	r.POST("/invoke", this.Invoke)
+}
+
+func GetUserId(c *gin.Context) int64 {
+	userObj, _ := c.Get("auth_user")
+	userId := userObj.(*User).Id
+	return userId
 }

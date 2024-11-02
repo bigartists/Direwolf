@@ -2,13 +2,12 @@ import { useMemo, useEffect, useCallback } from 'react';
 
 import { useSetState } from 'src/hooks/use-set-state';
 
-import axios, { endpoints } from 'src/utils/axios';
+import axios, { endpoints, setSession } from 'src/utils/axios';
 
-import { setSession } from './utils';
-import { STORAGE_KEY } from './constant';
 import { AuthContext } from '../auth-context';
 
 import type { AuthState } from '../../types';
+import { CONFIG } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -30,9 +29,8 @@ export function AuthProvider({ children }: Props) {
 
   const checkUserSession = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const accessToken = sessionStorage.getItem(CONFIG.ACCESS_TOKEN);
 
-      // if (accessToken && isValidToken(accessToken)) {
       if (accessToken) {
         setSession(accessToken);
 

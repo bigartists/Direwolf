@@ -43,7 +43,7 @@ export function useEventListener<
   element?: RefObject<T>,
   options?: boolean | AddEventListenerOptions
 ) {
-  // Create a ref that stores handler
+  // Create a ref that stores controller
   const savedHandler = useRef(handler);
 
   useIsomorphicLayoutEffect(() => {
@@ -57,7 +57,7 @@ export function useEventListener<
       return;
     }
 
-    // Create event listener that calls handler function stored in ref
+    // Create event listener that calls controller function stored in ref
     const eventListener: typeof handler = (event) => savedHandler.current(event);
 
     targetElement.addEventListener(eventName, eventListener, options);

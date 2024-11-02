@@ -1,1 +1,0 @@
-import{j as t,H as e,C as i}from"./index-Dfmr8ry_.js";import{J as s}from"./jwt-sign-up-view-CGc04243.js";const a={title:`Sign in | Jwt - ${i.appName}`};function m(){return t.jsxs(t.Fragment,{children:[t.jsx(e,{children:t.jsxs("title",{children:[" ",a.title]})}),t.jsx(s,{})]})}export{m as default};

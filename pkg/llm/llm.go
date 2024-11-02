@@ -27,16 +27,8 @@ func (c *client) SendQuery(apiKey, baseURL, model, query string, params map[stri
 
 	requestBody, err := json.Marshal(params)
 
-	//requestBody, err := json.Marshal(map[string]interface{}{
-	//	"model": model,
-	//	"messages": []map[string]string{
-	//		{
-	//			"role":    "user",
-	//			"content": query,
-	//		},
-	//	},
-	//	"stream": true, // Enable streaming
-	//})
+	println("requestBody::::::: ", string(requestBody))
+
 	if err != nil {
 		return err
 	}
@@ -53,9 +45,13 @@ func (c *client) SendQuery(apiKey, baseURL, model, query string, params map[stri
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+
 		return err
 	}
 	defer resp.Body.Close()
+
+	// 打印resp
+	println("resp::::::: ", resp)
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
@@ -76,18 +72,18 @@ func (c *client) handleStreamResponse(body io.ReadCloser, responseChan chan<- st
 		}
 
 		line = strings.TrimSpace(line)
-		//if line == "" {
-		//	continue
-		//}
-
-		// 如果行不为空，发送整行数据
-		if line != "" {
-			responseChan <- line
+		println("line::::::::: ", line)
+		if line == "" {
+			continue
 		}
 
-		// 如果收到 [DONE]，结束循环但仍然发送这个标记
-		if strings.TrimPrefix(line, "data: ") == "[DONE]" {
-			break
+		if strings.HasPrefix(line, "data: ") {
+			data := strings.TrimPrefix(line, "data: ")
+			if data == "[DONE]" {
+				break
+			}
+
+			responseChan <- data
 		}
 	}
 

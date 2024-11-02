@@ -1,9 +1,8 @@
 import { get } from 'lodash';
 
-import axios, { endpoints } from 'src/utils/axios';
+import axios, { endpoints, setSession } from 'src/utils/axios';
 
-import { setSession } from './utils';
-import { STORAGE_KEY } from './constant';
+import { CONFIG } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -15,8 +14,7 @@ export type SignInParams = {
 export type SignUpParams = {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  username: string;
 };
 
 /** **************************************
@@ -31,7 +29,7 @@ export const signInWithPassword = async ({ username, password }: SignInParams): 
     // const { accessToken } = res.data;
     // const { token: accessToken } = res?.data?.header;
 
-    const accessToken = get(res, 'data.header', '');
+    const accessToken = get(res, 'data.header.token', '');
 
     if (!accessToken) {
       throw new Error('Access token not found in response');
@@ -47,29 +45,23 @@ export const signInWithPassword = async ({ username, password }: SignInParams): 
 /** **************************************
  * Sign up
  *************************************** */
-export const signUp = async ({
-  email,
-  password,
-  firstName,
-  lastName,
-}: SignUpParams): Promise<void> => {
+export const signUp = async ({ email, password, username }: SignUpParams): Promise<void> => {
   const params = {
     email,
     password,
-    firstName,
-    lastName,
+    username,
   };
 
   try {
     const res = await axios.post(endpoints.auth.signUp, params);
 
-    const { accessToken } = res.data;
+    const { token: accessToken } = res.data.header;
 
     if (!accessToken) {
       throw new Error('Access token not found in response');
     }
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    sessionStorage.setItem(CONFIG.ACCESS_TOKEN, accessToken);
   } catch (error) {
     console.error('Error during sign up:', error);
     throw error;

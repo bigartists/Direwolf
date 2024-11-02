@@ -15,6 +15,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { useCreateModel } from 'src/actions/model';
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +23,7 @@ export type NewModelSchemaType = zod.infer<typeof NewModelSchema>;
 
 export const NewModelSchema = zod.object({
   model_type: zod.string().min(1, { message: 'Model_type is required!' }),
+  name: zod.string(),
   model: zod.string().min(1, { message: 'Model is required!' }),
   api_key: zod.string().min(1, { message: 'Api_key is required!' }),
   base_url: zod.string().min(1, { message: 'Base_url is required!' }),
@@ -32,14 +34,15 @@ export const NewModelSchema = zod.object({
 type Props = {
   open: boolean;
   onClose: () => void;
-  onCreate: (address: IModelItem) => void;
 };
 
-export function ModelNewForm({ open, onClose, onCreate }: Props) {
+export function ModelNewForm({ open, onClose }: Props) {
+  const { trigger: createModelHandle } = useCreateModel();
   const defaultValues = {
-    model: '',
-    api_key: '',
-    base_url: '',
+    name: '',
+    model: 'taichu_llm',
+    api_key: 'ryvsk3zz73419gkgubrnvufp',
+    base_url: 'https://ai-cds.wair.ac.cn/maas/v1/',
     model_type: 'llm',
   };
 
@@ -56,13 +59,17 @@ export function ModelNewForm({ open, onClose, onCreate }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      onCreate({
+      const params = {
+        name: data.name || data.model,
         model: data.model,
         model_type: data.model_type,
         api_key: data.api_key,
         base_url: data.base_url,
-      });
-      onClose();
+      };
+      console.log('🚀 ~ onSubmit ~ params:', params);
+      await createModelHandle(params);
+
+      // onClose();
     } catch (error) {
       console.error(error);
     }
@@ -84,6 +91,7 @@ export function ModelNewForm({ open, onClose, onCreate }: Props) {
                 { label: 'Others', value: 'others' },
               ]}
             />
+            <Field.Text name="name" label="Model alias" />
             <Field.Text name="model" label="Model" />
 
             <Field.Text name="api_key" label="Api Key" />

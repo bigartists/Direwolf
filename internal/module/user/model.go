@@ -17,20 +17,20 @@ type User struct {
 	// admin 0 和 1
 	Admin int `json:"admin" gorm:"column:admin"`
 	// active 0 和 1
-	Active int `json:"active" gorm:"column:active"`
+
+	Active *bool `json:"active" gorm:"column:active"`
 	// nickname
 	Name string `json:"name" gorm:"column:name"`
 	// description
 	Description string `json:"description" gorm:"column:description"`
-	Department  string `json:"department" gorm:"column:department"`
 	// avatar
 	Avatar string `json:"avatar" gorm:"column:avatar"`
 	// 自动维护时间
 
-	CreateAt time.Time `json:"create_time" gorm:"column:create_time;autoCreateTime;type:datetime(0);"`
-	UpdateAt time.Time `json:"update_time" gorm:"column:update_time;autoCreateTime;<-:false;type:datetime(0);"`
-	CreateBy int64     `json:"-" gorm:"column:create_by"`
-	UpdateBy int64     `json:"-" gorm:"column:update_by"`
+	CreateTime time.Time `json:"create_time" gorm:"column:create_time;autoCreateTime;type:datetime(0);"`
+	UpdateTime time.Time `json:"update_time" gorm:"column:update_time;autoCreateTime;<-:false;type:datetime(0);"`
+	CreateBy   int64     `json:"-" gorm:"column:create_by"`
+	UpdateBy   int64     `json:"-" gorm:"column:update_by"`
 }
 
 func (u *User) TableName() string {

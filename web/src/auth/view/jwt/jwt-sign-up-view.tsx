@@ -28,18 +28,29 @@ import { SignUpTerms } from '../../components/sign-up-terms';
 
 export type SignUpSchemaType = zod.infer<typeof SignUpSchema>;
 
-export const SignUpSchema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required!' }),
-  lastName: zod.string().min(1, { message: 'Last name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  password: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
-});
+export const SignUpSchema = zod
+  .object({
+    // firstName: zod.string().min(1, { message: 'First name is required!' }),
+    // lastName: zod.string().min(1, { message: 'Last name is required!' }),
+    username: zod.string().min(1, { message: 'Username is required!' }),
+    email: zod
+      .string()
+      .min(1, { message: 'Email is required!' })
+      .email({ message: 'Email must be a valid email address!' }),
+    password: zod
+      .string()
+      .min(1, { message: 'Password is required!' })
+      .min(6, { message: 'Password must be at least 6 characters!' }),
+    // 重复密码
+    confirmPassword: zod
+      .string()
+      .min(1, { message: 'Password is required!' })
+      .min(6, { message: 'Password must be at least 6 characters!' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 // ----------------------------------------------------------------------
 
@@ -50,13 +61,17 @@ export function JwtSignUpView() {
 
   const password = useBoolean();
 
+  const confirmPassword = useBoolean();
+
   const [errorMsg, setErrorMsg] = useState('');
 
   const defaultValues = {
-    firstName: 'Hello',
-    lastName: 'Friend',
-    email: 'hello@gmail.com',
-    password: '@demo1',
+    // firstName: 'Hello',
+    // lastName: 'Friend',
+    username: 'rh',
+    email: 'ruanhan24@outlook.com',
+    password: 'rh123456',
+    confirmPassword: 'rh123456',
   };
 
   const methods = useForm<SignUpSchemaType>({
@@ -74,8 +89,7 @@ export function JwtSignUpView() {
       await signUp({
         email: data.email,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        username: data.username,
       });
       await checkUserSession?.();
 
@@ -88,10 +102,11 @@ export function JwtSignUpView() {
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
+      {/* <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
         <Field.Text name="firstName" label="First name" InputLabelProps={{ shrink: true }} />
         <Field.Text name="lastName" label="Last name" InputLabelProps={{ shrink: true }} />
-      </Box>
+      </Box> */}
+      <Field.Text name="username" label="User name" InputLabelProps={{ shrink: true }} />
 
       <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
 
@@ -106,6 +121,25 @@ export function JwtSignUpView() {
             <InputAdornment position="end">
               <IconButton onClick={password.onToggle} edge="end">
                 <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+
+      <Field.Text
+        name="confirmPassword"
+        label="Confirm password"
+        placeholder="6+ characters"
+        type={confirmPassword.value ? 'text' : 'password'}
+        InputLabelProps={{ shrink: true }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={confirmPassword.onToggle} edge="end">
+                <Iconify
+                  icon={confirmPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                />
               </IconButton>
             </InputAdornment>
           ),

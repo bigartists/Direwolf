@@ -12,8 +12,9 @@ import { Iconify } from 'src/components/iconify';
 
 import ChatTrigger from './ChatTrigger';
 import { Messages } from './Messages';
-import { modelList } from 'src/.api-key';
+// import { modelList } from 'src/.api-key';
 import { Avatar, ButtonBase, Paper, Typography } from '@mui/material';
+import { useGetModelList } from 'src/actions/model';
 
 // ----------------------------------------------------------------------
 
@@ -24,10 +25,7 @@ type Props = {
 export function MultiLLMChat({ title = 'Blank' }: Props) {
   const MaxChatAdmittance = 3;
   const [chats, setChats] = useState<any>([]);
-  const [models, selectModels] = useState<string[]>([
-    'glm-4-flash',
-    //  'gpt-3.5-turbo', 'taichu_llm'
-  ]);
+  const [models, selectModels] = useState<number[]>([]);
   const [query, setQuery] = useState<string>('');
 
   const [shouldChatInfer, setShouldChatInfer] = useState<boolean>(false);
@@ -36,25 +34,25 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
   const { scrollRef: scrollRef2 } = useScrollToBottom();
   const { scrollRef: scrollRef3 } = useScrollToBottom();
 
-  console.log('🚀 ~ MultiLLMChat ~ modelList:', modelList);
+  const { modelList } = useGetModelList();
 
   const buildChats = useCallback(() => {
     // 根据models构建chats
     const chatInstance = models.map(
-      (model: string) => modelList?.find((item: any) => item.model === model),
+      (model: number) => modelList?.find((item: any) => item.id === model),
       []
     );
-    const isModelExist = (model: string) => chats.some((chat: any) => chat.model === model);
+    const isModelExist = (model: number) => chats.some((chat: any) => chat.id === model);
 
     const newChats = chatInstance.map((chat: any) => {
-      if (isModelExist(chat.model)) {
-        const ret = chats.find((c: any) => c.model === chat.model);
+      if (isModelExist(chat.id)) {
+        const ret = chats.find((c: any) => c.id === chat.id);
         return ret as IChat;
       }
 
       const chatParams = {
-        model_id: chat.model_id,
-        chatId: chat.chatId,
+        id: chat.id,
+        chatId: chat.id,
         model: chat.model,
         api_key: chat.api_key,
         base_url: chat.base_url,
@@ -73,7 +71,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
     } else {
       setChats([]);
     }
-  }, [chats, models]);
+  }, [chats, modelList, models]);
 
   const handleUserQuery = useCallback(
     (query: string) => {
@@ -318,13 +316,13 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
                     <Paper
                       component={ButtonBase}
                       variant="outlined"
-                      key={item.brand}
+                      key={item.model}
                       onClick={() =>
-                        selectModels((ids: string[]) => {
-                          if (ids.includes(item.model)) {
-                            return ids.filter((id) => id !== item.model);
+                        selectModels((ids: number[]) => {
+                          if (ids.includes(item.id)) {
+                            return ids.filter((id) => id !== item.id);
                           }
-                          return [...ids, item.model];
+                          return [...ids, item.id];
                         })
                       }
                       sx={{
@@ -334,7 +332,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
                         typography: 'subtitle2',
                         flexDirection: 'column',
                         borderWidth: 2,
-                        ...(models.includes(item.model) && {
+                        ...(models.includes(item.id) && {
                           borderColor: 'text.primary',
                           borderWidth: 2,
                         }),

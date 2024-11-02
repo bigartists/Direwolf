@@ -19,7 +19,7 @@ export const ERR_TEXT = '抱歉，暂无法回答该问题。';
 export interface IChat {
   // property
 
-  model_id: number; // fk，模型id
+  id: number; // fk，模型id
   chatId: string; // 会话id
   model: string;
   api_key: string;

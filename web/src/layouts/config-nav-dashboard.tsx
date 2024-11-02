@@ -52,7 +52,7 @@ export const navData = [
     subheader: 'basic ability',
     items: [
       { title: 'Chats', path: paths.dashboard.root, icon: ICONS.dashboard },
-      { title: 'Models', path: paths.dashboard.two, icon: ICONS.ecommerce },
+      { title: 'Models', path: paths.dashboard.models, icon: ICONS.ecommerce },
       // { title: 'Batch inference', path: paths.dashboard.three, icon: ICONS.analytics },
     ],
   },

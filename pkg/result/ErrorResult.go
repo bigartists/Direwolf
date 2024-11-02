@@ -23,6 +23,7 @@ func (this *ErrorResult) Unwrap() interface{} {
 
 // 支持多返回值
 func Result(vs ...interface{}) *ErrorResult {
+
 	if len(vs) == 1 {
 		if vs[0] == nil {
 			return &ErrorResult{nil, nil}

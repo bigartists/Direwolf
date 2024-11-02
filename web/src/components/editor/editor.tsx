@@ -79,6 +79,7 @@ export const Editor = forwardRef<HTMLDivElement, EditorProps>(
         }),
         CodeBlockLowlightExtension.extend({
           addNodeView() {
+            // @ts-ignore
             return ReactNodeViewRenderer(CodeHighlightBlock);
           },
         }).configure({ lowlight, HTMLAttributes: { class: editorClasses.content.codeBlock } }),

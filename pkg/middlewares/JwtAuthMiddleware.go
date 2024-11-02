@@ -13,22 +13,22 @@ import (
 	"time"
 )
 
-func JwtAuthMiddleware() gin.HandlerFunc {
+type AuthMiddleware struct {
+	userRepo user.IUserRepo
+}
+
+func NewAuthMiddleware(userRepo user.IUserRepo) *AuthMiddleware {
+	return &AuthMiddleware{userRepo: userRepo}
+}
+
+func (am *AuthMiddleware) JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
 		// 定义不需要JWT验证的路径
 		exceptPaths := map[string]bool{
-			"/api/v1/login":          true,
-			"/api/v1/me":             true,
-			"/api/v1/register":       true,
-			"/api/v1/configurations": true,
-			"/api/v1/invoke":         true,
-			// 非 /api 开头的所有
-			//"/":                  true,
-			//"/favicon.ico":       true,
-			//"/static":            true,
-			//"/static/":           true,
-			//"/static/index.html": true,
+			"/api/v1/login":    true,
+			"/api/v1/me":       true,
+			"/api/v1/register": true,
 		}
 		// 如果请求非api开头，则不进行JWT验证，直接继续处理请求
 		if !strings.HasPrefix(path, "/api") {
@@ -57,9 +57,10 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			//fmt.Println(getToken.Claims.(*utils.UserClaim).UserId)
 			userId := getToken.Claims.(*UserClaim).UserId
 
-			// 将userId 转为int， 并调用 dao.DaoGetter.FindUserById
+			// 将userId 转为int， 并调用 repository.DaoGetter.FindUserById
 			userObj := user.NewModel()
-			_, err := user.DaoGetter.FindUserById(userId, userObj)
+
+			_, err := am.userRepo.FindUserById(userId, userObj)
 			if err != nil {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "用户不存在"})
 				c.Abort()

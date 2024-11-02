@@ -28,6 +28,12 @@ func WithEmail(email string) UserModelAttrFunc {
 	}
 }
 
+func WithActive(active *bool) UserModelAttrFunc {
+	return func(u *User) {
+		u.Active = active
+	}
+}
+
 func (this UserModelAttrFuncs) apply(u *User) {
 	for _, f := range this {
 		f(u)

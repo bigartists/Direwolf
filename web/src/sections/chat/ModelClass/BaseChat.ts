@@ -4,6 +4,8 @@ import { cloneDeep } from 'lodash';
 import { CONFIG } from 'src/config-global';
 
 export default class Chat implements IChat {
+  id: number;
+
   model_id: number;
 
   chatId: string;
@@ -25,7 +27,8 @@ export default class Chat implements IChat {
   abortController: AbortController;
 
   constructor(props: IChatProps) {
-    this.model_id = props.model_id;
+    this.id = props.id;
+    this.model_id = props.id;
     this.chatId = props.chatId;
     this.model = props.model;
     this.api_key = props.api_key;
@@ -38,7 +41,7 @@ export default class Chat implements IChat {
   }
 
   async getToken() {
-    const token = localStorage.getItem(CONFIG.ACCESS_TOKEN);
+    const token = sessionStorage.getItem(CONFIG.ACCESS_TOKEN);
     return token;
   }
 
@@ -53,12 +56,12 @@ export default class Chat implements IChat {
       params: {
         model: params.model,
         messages: params.messages.slice(0, -1),
-        stream: params.stream,
+        stream: params.stream || true,
       },
     };
 
     let xRequestId: any = '';
-    fetchEventSource('/api/v1/invoke', {
+    fetchEventSource('/api/v1/model/invoke', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

@@ -4,7 +4,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { BookingWidgetSummary } from './booking-widget-summary';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { modelList } from 'src/.api-key';
+// import { modelList } from 'src/.api-key';
 import { isArray } from 'lodash';
 import { IChatProps } from '../chat/type';
 import { Avatar, Button } from '@mui/material';
@@ -13,6 +13,7 @@ import { Iconify } from 'src/components/iconify';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { ModelNewForm } from './components/model-new-form';
 import { IModelItem } from 'src/types/common';
+import { useGetModelList } from 'src/actions/model';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export function ModelView({ title = 'Blank' }: Props) {
+  const { modelList } = useGetModelList();
   console.log('🚀 ~ MultiLLMChat ~ modelList:', modelList);
 
   const addModelForm = useBoolean();
@@ -62,6 +64,7 @@ export function ModelView({ title = 'Blank' }: Props) {
           ? modelList.map((model: IChatProps) => {
               return (
                 <BookingWidgetSummary
+                  key={model.model}
                   title="LLM"
                   percent={2.6}
                   model={model.model}
@@ -83,13 +86,7 @@ export function ModelView({ title = 'Blank' }: Props) {
             })
           : null}
       </Box>
-      <ModelNewForm
-        open={addModelForm.value}
-        onClose={addModelForm.onFalse}
-        onCreate={(data: IModelItem) => {
-          console.log('create new model=', data);
-        }}
-      />
+      <ModelNewForm open={addModelForm.value} onClose={addModelForm.onFalse} />
     </DashboardContent>
   );
 }

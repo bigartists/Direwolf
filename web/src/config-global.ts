@@ -37,7 +37,8 @@ export const CONFIG: ConfigValue = {
   appVersion: packageJson.version,
   // serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
   // 如果是dev环境，使用mock server，生产模式使用 ""
-  serverUrl: import.meta.env.DEV ? import.meta.env.VITE_SERVER_URL : '',
+  // serverUrl: import.meta.env.DEV ? import.meta.env.VITE_SERVER_URL : '',
+  serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
   /**
    * Auth

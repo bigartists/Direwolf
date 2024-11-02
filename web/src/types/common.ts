@@ -10,6 +10,7 @@ export type IPaymentCard = {
 };
 
 export type IModelItem = {
+  name?: string;
   model: string;
   model_type: string;
   api_key: string;

@@ -2,31 +2,23 @@ package server
 
 import (
 	"fmt"
-	"github.com/bigartists/Direwolf/client"
-	"github.com/bigartists/Direwolf/internal/routers"
-	middlewares "github.com/bigartists/Direwolf/pkg/middleware"
-	"github.com/bigartists/Direwolf/pkg/validators"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )
 
-func Run(port int) error {
-	// 执行命令行
-	client.InitDB()
+type App struct {
+	router *gin.Engine
+}
 
-	r := gin.Default()
+func ProvideApp(router *gin.Engine) *App {
+	return &App{
+		router: router,
+	}
+}
 
-	r.Use(middlewares.JwtAuthMiddleware())
-	r.Use(middlewares.ErrorHandler())
+func (a *App) Run(port int) error {
 
-	// 加载路由
-	routes.SetupRouter(r)
-
-	FrontendServer(r)
-	// 加载 validator
-	validators.Build()
-
-	err := r.Run(fmt.Sprintf(":%d", port))
+	err := a.router.Run(fmt.Sprintf(":%d", port))
 	if err != nil {
 		return err
 	}
@@ -34,7 +26,7 @@ func Run(port int) error {
 }
 
 // NewApiServerCommand 初始化命令行参数
-func NewApiServerCommand() (cmd *cobra.Command) {
+func (a *App) NewApiServerCommand() (cmd *cobra.Command) {
 	// 集成 cobra命令
 	cmd = &cobra.Command{
 		Use: "appServer",
@@ -43,7 +35,7 @@ func NewApiServerCommand() (cmd *cobra.Command) {
 			if err != nil {
 				return err
 			}
-			return Run(port)
+			return a.Run(port)
 		},
 	}
 	// 添加 flag, name=port, 默认值是 9090

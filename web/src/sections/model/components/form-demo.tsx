@@ -1,5 +1,3 @@
-import type { IAddressItem } from 'src/types/common';
-
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,7 +38,7 @@ export const NewAddressSchema = zod.object({
 type Props = {
   open: boolean;
   onClose: () => void;
-  onCreate: (address: IAddressItem) => void;
+  onCreate: (address: any) => void;
 };
 
 export function ModelNewForm({ open, onClose, onCreate }: Props) {

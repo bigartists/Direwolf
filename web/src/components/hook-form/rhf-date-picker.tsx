@@ -13,6 +13,7 @@ import { formatStr } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
+// @ts-ignore
 type RHFDatePickerProps = DatePickerProps<Dayjs> & {
   name: string;
 };
@@ -27,9 +28,11 @@ export function RHFDatePicker({ name, slotProps, ...other }: RHFDatePickerProps)
       render={({ field, fieldState: { error } }) => (
         <DatePicker
           {...field}
+          // @ts-ignore
           value={dayjs(field.value)}
           onChange={(newValue) => field.onChange(dayjs(newValue).format())}
           format={formatStr.split.date}
+          // @ts-ignore
           slotProps={{
             ...slotProps,
             textField: {
@@ -47,7 +50,7 @@ export function RHFDatePicker({ name, slotProps, ...other }: RHFDatePickerProps)
 }
 
 // ----------------------------------------------------------------------
-
+// @ts-ignore
 type RHFMobileDateTimePickerProps = MobileDateTimePickerProps<Dayjs> & {
   name: string;
 };
@@ -66,9 +69,11 @@ export function RHFMobileDateTimePicker({
       render={({ field, fieldState: { error } }) => (
         <MobileDateTimePicker
           {...field}
+          // @ts-ignore
           value={dayjs(field.value)}
           onChange={(newValue) => field.onChange(dayjs(newValue).format())}
           format={formatStr.split.dateTime}
+          // @ts-ignore
           slotProps={{
             textField: {
               fullWidth: true,

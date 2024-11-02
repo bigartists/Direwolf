@@ -13,7 +13,7 @@ func ConvertUserToDTO(user *User) *UserBaseInfo {
 		Name:        user.Name,
 		Avatar:      user.Avatar,
 		Description: user.Description,
-		CreateAt:    user.CreateAt,
+		CreateAt:    user.CreateTime,
 		Admin:       strconv.Itoa(user.Admin),
 	}
 }

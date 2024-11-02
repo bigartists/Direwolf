@@ -20,3 +20,9 @@ type UserAsCreator struct {
 	Avatar   string `json:"avatar"`
 	Email    string `json:"email"`
 }
+
+type RegisterRequest struct {
+	Email    string `json:"email" binding:"required,email"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required,min=6"`
+}

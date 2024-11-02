@@ -6,7 +6,7 @@ import { ModelView } from 'src/sections/model/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Page two | Dashboard - ${CONFIG.appName}` };
+const metadata = { title: `Page Models | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

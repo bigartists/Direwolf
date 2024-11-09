@@ -13,6 +13,7 @@ import (
 type Client interface {
 	SendQuery(apiKey, baseURL, model, query string, params map[string]interface{}, responseChan chan<- string) error
 	SendQueryGetContent(apiKey, baseURL, model, query string, responseChan chan<- string) error
+	GetContentFromChunk(data string) (string, error)
 }
 
 type client struct{}
@@ -23,7 +24,7 @@ func NewClient() Client {
 
 func (c *client) SendQuery(apiKey, baseURL, model, query string, params map[string]interface{}, responseChan chan<- string) error {
 
-	url := fmt.Sprintf("%schat/completions", baseURL)
+	url := fmt.Sprintf("%s/chat/completions", baseURL)
 
 	requestBody, err := json.Marshal(params)
 
@@ -95,7 +96,7 @@ func (c *client) SendQueryGetContent(apiKey, baseURL, model, query string, respo
 	url := fmt.Sprintf("%schat/completions", baseURL)
 
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"model": model,
+		"maas": model,
 		"messages": []map[string]string{
 			{
 				"role":    "user",
@@ -175,4 +176,28 @@ func (c *client) SendQueryGetContent(apiKey, baseURL, model, query string, respo
 
 	close(responseChan)
 	return nil
+}
+
+func (c *client) GetContentFromChunk(data string) (string, error) {
+	var result map[string]interface{}
+	if err := json.Unmarshal([]byte(data), &result); err != nil {
+		return "", err
+	}
+
+	choices, ok := result["choices"].([]interface{})
+	if !ok || len(choices) == 0 {
+		return "", nil
+	}
+
+	delta, ok := choices[0].(map[string]interface{})["delta"].(map[string]interface{})
+	if !ok {
+		return "", nil
+	}
+
+	content, ok := delta["content"].(string)
+	if !ok {
+		return "", nil
+	}
+
+	return content, nil
 }

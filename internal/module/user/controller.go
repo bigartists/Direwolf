@@ -98,7 +98,7 @@ func (this *UserController) GetMe(c *gin.Context) {
 type LLMRequest struct {
 	BaseURL string                 `json:"base_url" binding:"required"`
 	APIKey  string                 `json:"api_key" binding:"required"`
-	Model   string                 `json:"model" binding:"required"`
+	Model   string                 `json:"maas" binding:"required"`
 	Prompt  string                 `json:"prompt" binding:"required"`
 	Params  map[string]interface{} `json:"params" binding:"required"`
 }

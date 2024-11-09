@@ -100,12 +100,12 @@ export const endpoints = {
   },
 
   models: {
-    create: '/model/create',
-    update: '/model/update',
+    create: '/maas/create',
+    update: '/maas/update',
     delete: (id: string | number) => `/model/delete/${id}`,
     detail: (id: string | number) => `/model/${id}`,
     list: '/models',
-    invoke: '/model/invoke',
+    invoke: '/maas/invoke',
   },
 
   product: {

@@ -9,6 +9,7 @@ import { fPercent, fShortenNumber } from 'src/utils/format-number';
 import { Iconify } from 'src/components/iconify';
 
 type Props = CardProps & {
+  name?: string;
   title: string;
   total?: number;
   model?: string;
@@ -16,7 +17,16 @@ type Props = CardProps & {
   icon: React.ReactElement;
 };
 
-export function BookingWidgetSummary({ title, percent, total, model, icon, sx, ...other }: Props) {
+export function BookingWidgetSummary({
+  name,
+  title,
+  percent,
+  total,
+  model,
+  icon,
+  sx,
+  ...other
+}: Props) {
   const renderTrending = (
     <Box gap={0.5} display="flex" alignItems="center" sx={{ typography: 'subtitle2' }}>
       <Iconify
@@ -52,7 +62,7 @@ export function BookingWidgetSummary({ title, percent, total, model, icon, sx, .
     >
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ color: 'text.secondary', typography: 'subtitle2' }}>{title}</Box>
-        <Box sx={{ my: 1.5, typography: 'h4' }}>{model}</Box>
+        <Box sx={{ my: 1.5, typography: 'h4' }}>{name}</Box>
         {/* {renderTrending} */}
       </Box>
 

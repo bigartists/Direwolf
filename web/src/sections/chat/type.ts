@@ -21,10 +21,11 @@ export interface IChat {
 
   id: number; // fk，模型id
   chatId: string; // 会话id
+  name: string; // 模型别名
   model: string;
   api_key: string;
   base_url: string;
-  brand: string;
+  avatar: string;
   messages: Array<{ content: string; role: string }>;
   stream: boolean;
   abortController: AbortController;

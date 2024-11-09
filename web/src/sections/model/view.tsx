@@ -67,6 +67,7 @@ export function ModelView({ title = 'Blank' }: Props) {
                   key={model.model}
                   title="LLM"
                   percent={2.6}
+                  name={model.name}
                   model={model.model}
                   sx={{
                     // bgcolor: 'background.neutral',
@@ -74,7 +75,7 @@ export function ModelView({ title = 'Blank' }: Props) {
                   }}
                   icon={
                     <Avatar
-                      src={model.brand}
+                      src={model.avatar}
                       sx={{
                         width: 50,
                         height: 50,

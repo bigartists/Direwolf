@@ -8,7 +8,9 @@ package inject
 
 import (
 	"github.com/bigartists/Direwolf/client"
-	"github.com/bigartists/Direwolf/internal/module/model"
+	"github.com/bigartists/Direwolf/internal/module/conversation"
+	"github.com/bigartists/Direwolf/internal/module/maas"
+	"github.com/bigartists/Direwolf/internal/module/message"
 	"github.com/bigartists/Direwolf/internal/module/user"
 	"github.com/bigartists/Direwolf/internal/routers"
 	"github.com/bigartists/Direwolf/pkg/middlewares"
@@ -22,11 +24,16 @@ func InitializeApp() (*server.App, error) {
 	iUserRepo := user.ProvideUserRepo(db)
 	iUserService := user.ProvideUserService(iUserRepo)
 	userController := user.ProvideUserController(iUserService)
-	iModelRepo := model.ProvideModelRepo(db)
-	iModelService := model.ProvideModelService(iModelRepo)
-	modelController := model.ProvideModelController(iModelService)
+	iModelRepo := maas.ProvideMaasRepo(db)
+	iMessageRepo := message.ProvideMessageRepo(db)
+	iMessageService := message.ProvideMessageService(iMessageRepo, db)
+	iConversationRepo := conversation.ProvideConversationRepo(db)
+	iConversationService := conversation.ProvideConversationService(iConversationRepo)
+	iMaasService := maas.ProvideMaasService(iModelRepo, iMessageService, iConversationService)
+	maasController := maas.ProvideMaasController(iMaasService)
+	conversationController := conversation.ProvideConversationController(iConversationService)
 	authMiddleware := middlewares.NewAuthMiddleware(iUserRepo)
-	engine := routers.ProvideRouter(userController, modelController, authMiddleware)
+	engine := routers.ProvideRouter(userController, maasController, conversationController, authMiddleware)
 	app := server.ProvideApp(engine)
 	return app, nil
 }

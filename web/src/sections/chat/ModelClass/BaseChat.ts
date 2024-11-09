@@ -18,6 +18,10 @@ export default class Chat implements IChat {
 
   stream: boolean;
 
+  name: string;
+
+  avatar: string;
+
   brand: string;
 
   messages: Array<any> = [];
@@ -34,7 +38,9 @@ export default class Chat implements IChat {
     this.api_key = props.api_key;
     this.base_url = props.base_url;
     this.stream = props.stream;
-    this.brand = props.brand;
+    this.brand = props.avatar;
+    this.avatar = props.avatar;
+    this.name = props.name;
     this.messages = props.messages || [];
     this.sessionStatus = props.sessionStatus;
     this.abortController = new AbortController(); // 用于终止fetch请求
@@ -49,9 +55,10 @@ export default class Chat implements IChat {
     const token = await this.getToken();
     // const newParms = cloneDeep(params);
     const newParams = {
-      base_url: params.base_url,
-      api_key: params.api_key,
-      model: params.model,
+      // base_url: params.base_url,
+      model_id: params.id,
+      // api_key: params.api_key,
+      // maas: params.maas,
       prompt: '该字段没啥用，后面优化掉', // 该字段没啥用，后面优化掉；
       params: {
         model: params.model,
@@ -61,7 +68,7 @@ export default class Chat implements IChat {
     };
 
     let xRequestId: any = '';
-    fetchEventSource('/api/v1/model/invoke', {
+    fetchEventSource('/api/v1/maas/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

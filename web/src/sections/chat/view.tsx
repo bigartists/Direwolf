@@ -58,6 +58,8 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
         base_url: chat.base_url,
         brand: chat.brand,
         stream: chat.stream,
+        name: chat.name,
+        avatar: chat.avatar,
         messages: [],
         // 刷入额外参数
       };
@@ -201,7 +203,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
               className="flex flex-col w-full flex-1 max-w-chat  gap-4 mx-auto z-1"
               messages={chat.messages}
               model={chat.model}
-              brand={chat.brand}
+              brand={chat.avatar}
               isStreaming
             />
 
@@ -339,7 +341,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
                       }}
                     >
                       <Box>
-                        <Avatar src={item.brand}></Avatar>
+                        <Avatar src={item.avatar}></Avatar>
                       </Box>
                       {item.model}
                     </Paper>

@@ -24,6 +24,7 @@ export type NewModelSchemaType = zod.infer<typeof NewModelSchema>;
 export const NewModelSchema = zod.object({
   model_type: zod.string().min(1, { message: 'Model_type is required!' }),
   name: zod.string(),
+  avatar: zod.string(),
   model: zod.string().min(1, { message: 'Model is required!' }),
   api_key: zod.string().min(1, { message: 'Api_key is required!' }),
   base_url: zod.string().min(1, { message: 'Base_url is required!' }),
@@ -40,9 +41,10 @@ export function ModelNewForm({ open, onClose }: Props) {
   const { trigger: createModelHandle } = useCreateModel();
   const defaultValues = {
     name: '',
-    model: 'taichu_llm',
-    api_key: 'ryvsk3zz73419gkgubrnvufp',
-    base_url: 'https://ai-cds.wair.ac.cn/maas/v1/',
+    avatar: '',
+    model: '',
+    api_key: '',
+    base_url: '',
     model_type: 'llm',
   };
 
@@ -61,6 +63,7 @@ export function ModelNewForm({ open, onClose }: Props) {
     try {
       const params = {
         name: data.name || data.model,
+        avatar: data.avatar,
         model: data.model,
         model_type: data.model_type,
         api_key: data.api_key,
@@ -91,6 +94,7 @@ export function ModelNewForm({ open, onClose }: Props) {
                 { label: 'Others', value: 'others' },
               ]}
             />
+            <Field.Text name="avatar" label="avatar url" />
             <Field.Text name="name" label="Model alias" />
             <Field.Text name="model" label="Model" />
 

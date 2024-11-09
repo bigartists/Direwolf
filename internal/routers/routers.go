@@ -1,7 +1,8 @@
 package routers
 
 import (
-	"github.com/bigartists/Direwolf/internal/module/model"
+	"github.com/bigartists/Direwolf/internal/module/conversation"
+	"github.com/bigartists/Direwolf/internal/module/maas"
 	"github.com/bigartists/Direwolf/internal/module/user"
 	"github.com/bigartists/Direwolf/pkg/middlewares"
 	"github.com/bigartists/Direwolf/pkg/validators"
@@ -10,7 +11,8 @@ import (
 )
 
 func ProvideRouter(userController *user.UserController,
-	modelController *model.ModelController,
+	maasController *maas.MaasController,
+	conversationController *conversation.ConversationController,
 	authMiddleware *middlewares.AuthMiddleware) *gin.Engine {
 	r := gin.Default()
 
@@ -19,7 +21,8 @@ func ProvideRouter(userController *user.UserController,
 
 	api := r.Group("/api/v1")
 	userController.Build(api)
-	modelController.Build(api)
+	maasController.Build(api)
+	conversationController.Build(api)
 
 	server.FrontendServer(r)
 

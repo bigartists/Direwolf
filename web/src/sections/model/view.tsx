@@ -13,7 +13,7 @@ import { Iconify } from 'src/components/iconify';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { ModelNewForm } from './components/model-new-form';
 import { IModelItem } from 'src/types/common';
-import { useGetModelList } from 'src/actions/model';
+import { useGetModelList } from 'src/actions/maas';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ export function ModelView({ title = 'Blank' }: Props) {
         links={[
           // { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'basic ability' },
-          { name: 'models' },
+          { name: 'maas' },
         ]}
         action={
           <Button
@@ -44,7 +44,7 @@ export function ModelView({ title = 'Blank' }: Props) {
             startIcon={<Iconify icon="mingcute:add-line" />}
             onClick={addModelForm.onTrue}
           >
-            添加模型
+            添加Maas
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}

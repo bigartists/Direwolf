@@ -10,9 +10,9 @@ import { classNames } from 'src/components/Markdown2/classNames';
 import { UserMessage } from './UserMessage';
 import { AssistantMessage } from './AssistantMessage';
 import { Avatar, Box, Stack, Typography } from '@mui/material';
+import { uuid } from 'src/utils/uuid';
 
 interface MessagesProps {
-  id?: string;
   className?: string;
   isStreaming?: boolean;
   messages?: Message[];
@@ -22,10 +22,10 @@ interface MessagesProps {
 
 export const Messages = React.forwardRef<HTMLDivElement, MessagesProps>(
   (props: MessagesProps, ref) => {
-    const { id, isStreaming = false, model, brand, messages = [] } = props;
+    const { isStreaming = false, model, brand, messages = [] } = props;
 
     return (
-      <div id={id} ref={ref} className={props.className}>
+      <div ref={ref} className={props.className}>
         {messages.length > 0
           ? messages.map((message, index) => {
               const { role, content } = message;
@@ -36,7 +36,7 @@ export const Messages = React.forwardRef<HTMLDivElement, MessagesProps>(
 
               return (
                 <div
-                  key={index}
+                  key={uuid(8, 16)}
                   className={classNames('flex gap-4  w-full rounded-[calc(0.75rem-1px)]', {
                     'bg-bolt-elements-messages-background':
                       isUserMessage || !isStreaming || (isStreaming && !isLast),
@@ -45,22 +45,16 @@ export const Messages = React.forwardRef<HTMLDivElement, MessagesProps>(
                     'mt-4': !isFirst,
                   })}
                 >
-                  {/* {isUserMessage && (
-                    <div className="flex items-center justify-center w-[34px] h-[34px] overflow-hidden bg-white text-gray-600 rounded-full shrink-0 self-start">
-                      <Avatar alt="Remy Sharp" src={userAvartar} />
-                    </div>
-                  )} */}
-
-                  <div className="grid grid-col-1 w-full">
+                  <div className="grid grid-col-1 w-full" key={uuid(8, 16)}>
                     {isUserMessage ? (
-                      <UserMessage content={content} />
+                      <UserMessage content={content} key={uuid(8, 16)} />
                     ) : (
                       <Stack direction="column" spacing={2}>
                         <Box>
                           <Stack direction="row" spacing={2} className="flex items-center">
                             {isAssistant && (
                               <div className="flex items-center justify-center w-[34px] h-[34px] overflow-hidden bg-white text-gray-600 rounded-full shrink-0 self-start">
-                                <Avatar alt="Remy Sharp" src={brand} />
+                                <Avatar alt="Remy Sharp" src={brand} key={uuid(8, 16)} />
                               </div>
                             )}
                             <Typography
@@ -72,7 +66,7 @@ export const Messages = React.forwardRef<HTMLDivElement, MessagesProps>(
                             </Typography>
                           </Stack>
                         </Box>
-                        <AssistantMessage content={content} />
+                        <AssistantMessage content={content} key={uuid(8, 16)} />
                       </Stack>
                     )}
                   </div>

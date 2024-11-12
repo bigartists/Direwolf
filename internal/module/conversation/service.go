@@ -16,9 +16,9 @@ func (c *ConversationService) IsConversationExist(ctx context.Context, conversat
 	return exist, nil
 }
 
-func (c *ConversationService) CreateConversation(ctx context.Context, req CreateConversationRequest) (*Conversation, error) {
+func (c *ConversationService) CreateConversation(ctx context.Context, req CreateConversationRequest, userId int64) (*Conversation, error) {
 
-	conversation, err := c.repo.CreateConversation(ctx, &req)
+	conversation, err := c.repo.CreateConversation(ctx, &req, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (c *ConversationService) GetConversationDetail(ctx context.Context, userID 
 }
 
 type IConversationService interface {
-	CreateConversation(ctx context.Context, req CreateConversationRequest) (*Conversation, error)
+	CreateConversation(ctx context.Context, req CreateConversationRequest, userId int64) (*Conversation, error)
 	GetConversationHistory(ctx context.Context, userID int64) ([]*Conversation, error)
 	GetConversationDetail(ctx context.Context, userID int64, conversationID int64) (*Conversation, error)
 	IsConversationExist(ctx context.Context, conversationSessionID string) (bool, error)

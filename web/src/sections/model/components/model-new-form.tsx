@@ -15,7 +15,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-import { useCreateModel } from 'src/actions/model';
+import { useCreateModel } from 'src/actions/maas';
 
 // ----------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ export function ModelNewForm({ open, onClose }: Props) {
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogTitle>添加模型</DialogTitle>
+        <DialogTitle>添加Maas</DialogTitle>
 
         <DialogContent dividers>
           <Stack spacing={3}>

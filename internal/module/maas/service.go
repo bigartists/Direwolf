@@ -9,6 +9,7 @@ import (
 	"github.com/bigartists/Direwolf/pkg/result"
 	"github.com/bigartists/Direwolf/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"io"
 	"time"
 )
 
@@ -137,7 +138,8 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 	modelId := req.ModelId
 	messageContext := req.Context
 
-	maxSeq, err := m.messageService.GetMaxSequenceNumber(req.SessionId)
+	// SequenceNumber 有bug
+	maxSeq, err := m.messageService.GetMaxSequenceNumber(req.SessionId, message.MessageType(message.MessageTypes["Assistant"]))
 	if err != nil {
 		ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
 		c.JSON(400, ret)
@@ -148,9 +150,10 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 		message.WithConversationSessionID(sessionId),
 		message.WithMessageType(message.MessageTypes["User"]),
 		message.WithContent(prompt),
-		message.WithModelID(&modelId),
+		message.WithMaasID(&modelId),
 		message.WithSequenceNumber(maxSeq+1),
 		message.WithContext(messageContext),
+		message.WithParentQuestionID(nil),
 	)
 
 	currentQuestionMessage, err := m.messageService.CreateQuestionMessage(question)
@@ -180,34 +183,48 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 
 	var fullResponse string
 
-	for chunk := range responseChan {
-		c.SSEvent("", chunk)
+	// 使用 c.Stream 来确保连接保持开启状态直到所有数据发送完成
+	c.Stream(func(w io.Writer) bool {
+		chunk, ok := <-responseChan
+		if !ok {
+			return false
+		}
+
+		c.Writer.WriteString(chunk + "\n\n")
 		c.Writer.Flush()
+
+		// 如果是 DONE 消息，结束流
+		if chunk == "data: [DONE]" {
+			return false
+		}
+
 		content, err := client.GetContentFromChunk(chunk)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
-			ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
-			c.JSON(400, ret)
-			return
+			return false
 		}
 		fullResponse += content
-	}
 
+		return true
+	})
+
+	parentQuestionID := currentQuestionMessage.ID
 	// 保存回答数据
 	answer := message.NewMessage(
 		message.WithConversationSessionID(sessionId),
 		message.WithMessageType(message.MessageTypes["Assistant"]),
 		message.WithContent(fullResponse),
-		message.WithModelID(&modelId),
+		message.WithMaasID(&modelId),
 		message.WithSequenceNumber(maxSeq+2),
 		message.WithContext(messageContext),
-		message.WithParentQuestionID(currentQuestionMessage.ID),
+		message.WithParentQuestionID(&parentQuestionID),
 	)
 	// 更新conversation 最后一条信息的时间；
 	err = m.messageService.CreateModelAnswerMessage(answer)
 	if err != nil {
-		ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
-		c.JSON(400, ret)
+		//ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
+		//c.JSON(400, ret)
+		fmt.Println("err: ", err)
 		return
 	}
 

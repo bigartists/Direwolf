@@ -6,15 +6,18 @@ import useScrollToBottom from 'src/hooks/useScrollToBottom';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import Chat from './ModelClass/BaseChat';
-import { IChat, IChatProps, SessionStatuTypes } from './type';
+import Chat, { IChat } from './ModelClass/BaseChat';
+import { IChatProps, SessionStatuTypes } from './type';
 import { Iconify } from 'src/components/iconify';
 
 import ChatTrigger from './ChatTrigger';
 import { Messages } from './Messages';
 // import { modelList } from 'src/.api-key';
 import { Avatar, ButtonBase, Paper, Typography } from '@mui/material';
-import { useGetModelList } from 'src/actions/model';
+import { useGetModelList } from 'src/actions/maas';
+import { useCreateConversation } from 'src/actions/conversation';
+import { uuid } from 'src/utils/uuid';
+import { get } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +30,8 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
   const [chats, setChats] = useState<any>([]);
   const [models, selectModels] = useState<number[]>([]);
   const [query, setQuery] = useState<string>('');
+  const { isMutating: createConversationLoading, trigger: createConversation } =
+    useCreateConversation();
 
   const [shouldChatInfer, setShouldChatInfer] = useState<boolean>(false);
 
@@ -54,12 +59,10 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
         id: chat.id,
         chatId: chat.id,
         model: chat.model,
-        api_key: chat.api_key,
-        base_url: chat.base_url,
-        brand: chat.brand,
         stream: chat.stream,
         name: chat.name,
         avatar: chat.avatar,
+        session_id: '',
         messages: [],
         // 刷入额外参数
       };
@@ -75,9 +78,14 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
     }
   }, [chats, modelList, models]);
 
+  const isHasSession = useCallback(() => {
+    return chats.every((chat: any) => !!chat.session_id);
+  }, [chats]);
+
   const handleUserQuery = useCallback(
-    (query: string) => {
+    async (query: string) => {
       // eslint-disable-next-line no-debugger
+
       const isNotReady = chats.some(
         (chat: any) => chat.sessionStatus === SessionStatuTypes.running
       );
@@ -85,21 +93,34 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
         alert('模型回复问题中，请等待所有模型就绪后再发起新一轮问答');
         return;
       }
+
+      let session_id = '';
+
+      if (!isHasSession()) {
+        // todo 这里添加判断，如果不存在session_id，就创建一个新的session_id，否则不应该创建新的session_id
+        const conversation = await createConversation({
+          title: query,
+          maas_ids: models,
+        });
+
+        console.log('🚀 ~ conversation:', conversation);
+
+        session_id = get(conversation, 'session_id', '');
+      }
+
       chats.forEach((chat: any) => {
         const params: any = {
           ...chat,
         };
 
+        if (params.session_id === '' && session_id !== '') {
+          params.session_id = session_id;
+        }
+
         console.log('🚀 ~ params:', params);
 
         // 添加系统人设
         if (params?.system_prompt) {
-          // if (!isCurSystemPrompt(params?.system_prompt)) {
-          //   params.messages.push({
-          //     role: 'system',
-          //     content: params.system_prompt,
-          //   })
-          // }
           if (params.messages.length > 0) {
             if (params.messages[0].role !== 'system') {
               params.messages.unshift({
@@ -112,33 +133,23 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
           }
         }
 
-        // Add user query to messages
         params.messages.push({
-          // id: creatUuid(),
           content: query,
           role: 'user',
-          // picture: params.curPicture,
         });
-        // Add empty message for assistant to fill
 
         params.messages.push({
-          // id: creatUuid(),
-          // type: chat.model_type,
-          // picture: chat.picture,
           content: '',
           role: 'assistant',
           loading: true,
-          // question: query,
-          // context: JSON.stringify(chat.messages),
         });
 
         chat.predict(params, (response: any, options?: any) => {
           setChats(
             chats.map((chatItem: any) => {
-              // 清除图片
-
               if (chatItem.model === chat.model) {
                 chatItem.messages = response;
+                chatItem.session_id = params.session_id;
                 if (options) {
                   const { sessionStatus } = options;
                   chatItem.sessionStatus = sessionStatus;
@@ -165,7 +176,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
         setQuery('');
       });
     },
-    [chats]
+    [chats, createConversation, isHasSession, models]
   );
 
   const userQueryAdapter = useCallback(
@@ -173,7 +184,6 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
       setQuery(queryString);
       buildChats();
       setShouldChatInfer(true);
-      // handleUserQuery(queryString);
     },
     [buildChats]
   );
@@ -198,7 +208,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
         }
 
         return (
-          <div ref={scrollRef} key={chat.chatId} className="flex-1 flex-shrink-0 max-w-screen-lg">
+          <div ref={scrollRef} key={uuid(8, 16)} className="flex-1 flex-shrink-0 max-w-screen-lg">
             <Messages
               className="flex flex-col w-full flex-1 max-w-chat  gap-4 mx-auto z-1"
               messages={chat.messages}
@@ -282,9 +292,15 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
       >
         {chats?.length > 0 ? (
           <>
-            <div className="w-full flex  gap-4  overflow-y-auto justify-center flex-1">
+            <div
+              className="w-full flex  gap-4  overflow-y-auto justify-center flex-1"
+              key={uuid(8, 16)}
+            >
               {chats?.length > 0 ? (
-                <div className="flex flex-1 gap-2   overflow-x-auto w-full p-2 justify-center ">
+                <div
+                  className="flex flex-1 gap-2   overflow-x-auto w-full p-2 justify-center "
+                  key={uuid(8, 16)}
+                >
                   {getChats}
                 </div>
               ) : null}
@@ -318,7 +334,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
                     <Paper
                       component={ButtonBase}
                       variant="outlined"
-                      key={item.model}
+                      key={item.name}
                       onClick={() =>
                         selectModels((ids: number[]) => {
                           if (ids.includes(item.id)) {
@@ -343,7 +359,7 @@ export function MultiLLMChat({ title = 'Blank' }: Props) {
                       <Box>
                         <Avatar src={item.avatar}></Avatar>
                       </Box>
-                      {item.model}
+                      {item.name}
                     </Paper>
                   ))}
                 </Box>

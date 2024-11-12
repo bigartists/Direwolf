@@ -1,7 +1,7 @@
 package conversation
 
 import (
-	"github.com/bigartists/Direwolf/internal/module/conversation_model"
+	"github.com/bigartists/Direwolf/internal/module/conversation_maas"
 	"time"
 )
 
@@ -33,7 +33,7 @@ func WithStatus(status ConversationStatus) ConversationAttrFunc {
 	}
 }
 
-func WithModels(models []*conversation_model.ConversationModel) ConversationAttrFunc {
+func WithModels(models []*conversation_maas.ConversationModel) ConversationAttrFunc {
 	return func(c *Conversation) {
 		c.Models = models
 	}

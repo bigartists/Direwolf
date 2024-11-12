@@ -8,7 +8,8 @@ import userAvartar from 'src/assets/images/v3/icon/user.svg';
 
 import Markdown from 'src/components/Markdown';
 
-import { IChat, RoleTypes } from './type';
+import { RoleTypes } from './type';
+import { IChat } from './ModelClass/BaseChat';
 
 export const ChatItem = memo(
   (props: {

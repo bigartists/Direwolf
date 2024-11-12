@@ -1,28 +1,42 @@
 import { fetchEventSource } from '@echofly/fetch-event-source';
-import { IChat, IChatProps, SAFTY_TEXT, SessionStatuTypes } from '../type';
+import { IChatProps, SAFTY_TEXT, SessionStatuTypes } from '../type';
 import { cloneDeep } from 'lodash';
 import { CONFIG } from 'src/config-global';
+
+export interface IChat {
+  // property
+
+  id: number; // fk，模型id
+  name: string; // 模型别名
+  avatar: string;
+  model: string;
+  messages: Array<{ content: string; role: string }>;
+  stream: boolean;
+  session_id: string;
+  abortController: AbortController;
+  sessionStatus?: SessionStatuTypes;
+  // function
+
+  predict: (params: any, cb: (params?: any) => void) => Promise<any>;
+  abortPredict: (params?: any) => void;
+  getPrompt(messages: any): string;
+  // 遗漏的一个问题， predict时的四种不同的状态处理；还有返回的对话的渲染逻辑；
+}
 
 export default class Chat implements IChat {
   id: number;
 
-  model_id: number;
-
-  chatId: string;
-
   model: string;
 
-  api_key: string;
-
-  base_url: string;
+  model_id: number;
 
   stream: boolean;
 
   name: string;
 
-  avatar: string;
+  session_id: string;
 
-  brand: string;
+  avatar: string;
 
   messages: Array<any> = [];
 
@@ -33,14 +47,11 @@ export default class Chat implements IChat {
   constructor(props: IChatProps) {
     this.id = props.id;
     this.model_id = props.id;
-    this.chatId = props.chatId;
-    this.model = props.model;
-    this.api_key = props.api_key;
-    this.base_url = props.base_url;
     this.stream = props.stream;
-    this.brand = props.avatar;
-    this.avatar = props.avatar;
+    this.session_id = props.session_id;
+    this.model = props.model;
     this.name = props.name;
+    this.avatar = props.avatar;
     this.messages = props.messages || [];
     this.sessionStatus = props.sessionStatus;
     this.abortController = new AbortController(); // 用于终止fetch请求
@@ -51,15 +62,22 @@ export default class Chat implements IChat {
     return token;
   }
 
+  getPrompt(messages: any): string {
+    const targetMessages = messages.slice(0, -1);
+    const lastMessage = targetMessages[targetMessages.length - 1] || {};
+    if (lastMessage.role === 'user') {
+      return lastMessage.content;
+    }
+    return '';
+  }
+
   async predict(params: any, cb: (params?: any, options?: any) => void): Promise<any> {
     const token = await this.getToken();
-    // const newParms = cloneDeep(params);
     const newParams = {
-      // base_url: params.base_url,
-      model_id: params.id,
-      // api_key: params.api_key,
-      // maas: params.maas,
-      prompt: '该字段没啥用，后面优化掉', // 该字段没啥用，后面优化掉；
+      model_id: params.model_id,
+      prompt: this.getPrompt(params.messages),
+      session_id: params.session_id,
+      context: JSON.stringify(params.messages),
       params: {
         model: params.model,
         messages: params.messages.slice(0, -1),
@@ -78,6 +96,7 @@ export default class Chat implements IChat {
       signal: this.abortController.signal,
       openWhenHidden: true,
       onopen: async (resp: any) => {
+        // debugger;
         const contentype = resp.headers.get('content-type') || '';
         xRequestId = resp.headers.get('X-Request-Id');
         if (resp.ok && !contentype.includes('text/event-stream')) {
@@ -100,13 +119,23 @@ export default class Chat implements IChat {
         }
       },
       onmessage: (msg: any) => {
+        // debugger;
         const { data } = msg;
         if (data === ' [DONE]') {
           this.abortPredict();
+          const messages: any = cloneDeep(this.messages);
+          const lastMessage: any = messages[messages.length - 1];
+
+          messages.splice(messages.length - 1, 1, lastMessage);
+          cb &&
+            cb(messages, {
+              sessionStatus: SessionStatuTypes.ready,
+            });
           return;
         }
         const messages: any = cloneDeep(this.messages);
         let lastMessage = messages[messages.length - 1] || {};
+
         const { choices } = JSON.parse(data || '{}');
         const { delta, finish_reason } = choices?.[0] || {};
         console.log('🚀 ~ Chat ~ finish_reason:', finish_reason);
@@ -126,13 +155,11 @@ export default class Chat implements IChat {
             messages.splice(messages.length - 1, 1, lastMessage);
             cb && cb(messages);
             break;
-          // 默认显示
           default:
             lastMessage = {
               ...lastMessage,
               content: `${lastMessage.content}${delta?.content}`,
               loading: false,
-              // id: xRequestId,
             };
             messages.splice(messages.length - 1, 1, lastMessage);
             // todo 除了react component内容的更新，其他接口不建议更新类的值
@@ -149,6 +176,7 @@ export default class Chat implements IChat {
         throw err;
       },
       onclose: () => {
+        // debugger;
         console.log('eventSource close');
         const messages: any = cloneDeep(this.messages);
         const lastMessage: any = messages[messages.length - 1];

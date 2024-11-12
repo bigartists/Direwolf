@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { memo } from 'react';
 // import { Markdown } from 'src/components/Markdown3';
 import Markdown from 'src/components/Markdown';
@@ -7,8 +8,14 @@ interface AssistantMessageProps {
 }
 
 export const AssistantMessage = memo(({ content }: AssistantMessageProps) => (
-  <div className="overflow-hidden w-full">
+  <Box
+    className="overflow-hidden w-full  p-4 rounded-xl"
+    sx={{
+      // bgcolor: 'background.neutral',
+      color: 'grey.800',
+    }}
+  >
     <Markdown content={content}></Markdown>
     {/* <Markdown children={content}></Markdown> */}
-  </div>
+  </Box>
 ));

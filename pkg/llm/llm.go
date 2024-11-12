@@ -28,8 +28,6 @@ func (c *client) SendQuery(apiKey, baseURL, model, query string, params map[stri
 
 	requestBody, err := json.Marshal(params)
 
-	println("requestBody::::::: ", string(requestBody))
-
 	if err != nil {
 		return err
 	}
@@ -51,9 +49,6 @@ func (c *client) SendQuery(apiKey, baseURL, model, query string, params map[stri
 	}
 	defer resp.Body.Close()
 
-	// 打印resp
-	println("resp::::::: ", resp)
-
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
@@ -65,6 +60,9 @@ func (c *client) handleStreamResponse(body io.ReadCloser, responseChan chan<- st
 	reader := bufio.NewReader(body)
 	for {
 		line, err := reader.ReadString('\n')
+
+		fmt.Println("line:=======", line)
+
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -73,18 +71,18 @@ func (c *client) handleStreamResponse(body io.ReadCloser, responseChan chan<- st
 		}
 
 		line = strings.TrimSpace(line)
-		println("line::::::::: ", line)
+
 		if line == "" {
 			continue
 		}
 
 		if strings.HasPrefix(line, "data: ") {
-			data := strings.TrimPrefix(line, "data: ")
-			if data == "[DONE]" {
+			if line == "data: [DONE]" {
+				responseChan <- line // 发送 DONE 消息
 				break
 			}
 
-			responseChan <- data
+			responseChan <- line
 		}
 	}
 
@@ -179,6 +177,15 @@ func (c *client) SendQueryGetContent(apiKey, baseURL, model, query string, respo
 }
 
 func (c *client) GetContentFromChunk(data string) (string, error) {
+	// 首先去除 "data: " 前缀
+	data = strings.TrimPrefix(strings.TrimSpace(data), "data: ")
+
+	// 如果是 [DONE] 信号，直接返回空内容
+	if data == "[DONE]" {
+		return "", nil
+	}
+
+	// 解析 JSON
 	var result map[string]interface{}
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
 		return "", err

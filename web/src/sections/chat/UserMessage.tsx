@@ -17,10 +17,13 @@ export function UserMessage({ content }: UserMessageProps) {
     <Box
       className="overflow-hidden p-4 rounded-xl"
       sx={{
-        bgcolor: { md: 'background.neutral' },
+        bgcolor: 'background.neutral',
+        // color: 'grey.800',
+        // bgcolor: 'primary.lighter',
       }}
     >
-      <Markdown limitedMarkdown>{sanitizeUserMessage(content)}</Markdown>
+      {sanitizeUserMessage(content)}
+      {/* <Markdown limitedMarkdown>{sanitizeUserMessage(content)}</Markdown> */}
     </Box>
   );
 }

@@ -2,14 +2,14 @@ package conversation
 
 import (
 	"context"
-	"github.com/bigartists/Direwolf/internal/module/conversation_model"
+	"github.com/bigartists/Direwolf/internal/module/conversation_maas"
 	"github.com/bigartists/Direwolf/pkg/utils"
 	"gorm.io/gorm"
 	"time"
 )
 
 type IConversationRepo interface {
-	CreateConversation(ctx context.Context, req *CreateConversationRequest) (*Conversation, error)
+	CreateConversation(ctx context.Context, req *CreateConversationRequest, userId int64) (*Conversation, error)
 	GetConversationHistory(ctx context.Context, userID int64) ([]*Conversation, error)
 	GetConversationDetail(ctx context.Context, userID int64, conversationID int64) (*Conversation, error)
 	IsConversationExist(ctx context.Context, conversationSessionID string) (bool, error)
@@ -25,10 +25,10 @@ func (c *ConversationRepo) IsConversationExist(ctx context.Context, conversation
 	return count > 0, err
 }
 
-func (c *ConversationRepo) CreateConversation(ctx context.Context, req *CreateConversationRequest) (*Conversation, error) {
+func (c *ConversationRepo) CreateConversation(ctx context.Context, req *CreateConversationRequest, userId int64) (*Conversation, error) {
 	conversation := &Conversation{
 		SessionID:     utils.GenerateUUID(),
-		UserID:        req.UserID,
+		UserID:        userId,
 		Title:         req.Title,
 		Status:        ConversationStatusActive,
 		LastMessageAt: time.Now(),
@@ -39,10 +39,10 @@ func (c *ConversationRepo) CreateConversation(ctx context.Context, req *CreateCo
 			return err
 		}
 		// 关联模型创建
-		for _, modelID := range req.ModelIDs {
-			convModel := &conversation_model.ConversationModel{
+		for _, maasID := range req.MaasIds {
+			convModel := &conversation_maas.ConversationModel{
 				ConversationSessionID: conversation.SessionID,
-				ModelID:               modelID,
+				MaasID:                maasID,
 				Status:                "active",
 			}
 			if err := tx.Create(convModel).Error; err != nil {

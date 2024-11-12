@@ -13,7 +13,7 @@ const icon = (name: string) => {
   return <SvgColor src={src} />;
 };
 
-const ICONS = {
+export const ICONS = {
   job: icon('ic-job'),
   blog: icon('ic-blog'),
   chat: icon('ic-chat'),
@@ -52,7 +52,7 @@ export const navData = [
     subheader: 'basic ability',
     items: [
       { title: 'Chats', path: paths.dashboard.root, icon: ICONS.dashboard },
-      { title: 'Models', path: paths.dashboard.models, icon: ICONS.ecommerce },
+      { title: 'Maas', path: paths.dashboard.maas, icon: ICONS.ecommerce },
       // { title: 'Batch inference', path: paths.dashboard.three, icon: ICONS.analytics },
     ],
   },

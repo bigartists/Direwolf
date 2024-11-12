@@ -16,10 +16,10 @@ type Message struct {
 	Content               string    `json:"content" gorm:"column:content;not null"`
 	Context               string    `json:"context" gorm:"column:context;"`
 	Expand                string    `json:"expand" gorm:"column:expand;"`
-	ModelID               *int64    `json:"model_id" gorm:"column:model_id"`
+	MaasID                *int64    `json:"maas_id" gorm:"column:maas_id"`
 	SequenceNumber        int       `json:"sequence_number" gorm:"column:sequence_number;not null"`
 	CreateTime            time.Time `json:"create_time" gorm:"column:create_time;autoCreateTime;type:datetime(0);"`
-	ParentQuestionID      int64     `json:"parent_question_id" gorm:"column:parent_question_id"`
+	ParentQuestionID      *int64    `json:"parent_question_id" gorm:"column:parent_question_id"`
 }
 
 func (m *Message) TableName() string {

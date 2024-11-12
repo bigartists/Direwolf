@@ -87,7 +87,7 @@ export const postFetcher = async (url: string, body: any) => {
   const res = await axiosInstance.post(url, {
     ...body,
   });
-  return res.data;
+  return res.data.payload;
 };
 
 // ----------------------------------------------------------------------
@@ -99,13 +99,17 @@ export const endpoints = {
     signUp: '/register',
   },
 
-  models: {
+  maas: {
     create: '/maas/create',
     update: '/maas/update',
-    delete: (id: string | number) => `/model/delete/${id}`,
-    detail: (id: string | number) => `/model/${id}`,
-    list: '/models',
+    delete: (id: string | number) => `/maas/delete/${id}`,
+    detail: (id: string | number) => `/maas/${id}`,
+    list: '/maas_list',
     invoke: '/maas/invoke',
+  },
+
+  conversation: {
+    create: '/conversation/create',
   },
 
   product: {

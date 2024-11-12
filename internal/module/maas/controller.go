@@ -118,11 +118,20 @@ func (this *MaasController) Invoke(c *gin.Context) {
 	}
 
 	c.Stream(func(w io.Writer) bool {
-		if msg, ok := <-responseChan; ok {
-			c.SSEvent("", msg)
-			return true
+		chunk, ok := <-responseChan
+		if !ok {
+			return false
 		}
-		return false
+
+		// 直接写入原始消息，因为已经包含了 "data: " 前缀
+		c.Writer.WriteString(chunk + "\n\n")
+		c.Writer.Flush()
+
+		// 如果是 DONE 消息，结束流
+		if chunk == "data: [DONE]" {
+			return false
+		}
+		return true
 	})
 }
 

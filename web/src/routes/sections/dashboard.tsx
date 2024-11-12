@@ -11,7 +11,7 @@ import { AuthGuard } from 'src/auth/guard';
 // ----------------------------------------------------------------------
 
 const IndexPage = lazy(() => import('src/pages/dashboard/one'));
-const PageModels = lazy(() => import('src/pages/dashboard/models'));
+const PageModels = lazy(() => import('src/pages/dashboard/maas'));
 const PageThree = lazy(() => import('src/pages/dashboard/three'));
 const PageFour = lazy(() => import('src/pages/dashboard/four'));
 const PageFive = lazy(() => import('src/pages/dashboard/five'));
@@ -33,7 +33,7 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <IndexPage />, index: true },
-      { path: 'models', element: <PageModels /> },
+      { path: 'maas', element: <PageModels /> },
       { path: 'three', element: <PageThree /> },
       {
         path: 'group',

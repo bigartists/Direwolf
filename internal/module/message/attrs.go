@@ -46,9 +46,9 @@ func WithExpand(expand string) MessageAttrFunc {
 	}
 }
 
-func WithModelID(modelID *int64) MessageAttrFunc {
+func WithMaasID(maasID *int64) MessageAttrFunc {
 	return func(u *Message) {
-		u.ModelID = modelID
+		u.MaasID = maasID
 	}
 }
 
@@ -58,7 +58,7 @@ func WithSequenceNumber(sequenceNumber int) MessageAttrFunc {
 	}
 }
 
-func WithParentQuestionID(parentId int64) MessageAttrFunc {
+func WithParentQuestionID(parentId *int64) MessageAttrFunc {
 	return func(u *Message) {
 		u.ParentQuestionID = parentId
 	}

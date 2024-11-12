@@ -18,7 +18,7 @@ type Maas struct {
 	Name        string     `json:"name" gorm:"not null"`
 	Description string     `json:"description"`
 	Status      MaasStatus `json:"status" gorm:"type:ENUM('active', 'inactive', 'deprecated');default:'active'"`
-	Model       string     `json:"model" gorm:"column:maas;unique" binding:"required"`
+	Model       string     `json:"model" gorm:"column:model;unique" binding:"required"`
 	BaseUrl     string     `json:"base_url" gorm:"column:base_url;not null" binding:"required"`
 	ApiKey      string     `json:"api_key" gorm:"column:api_key;not null" binding:"required"`
 	ModelType   string     `json:"model_type" gorm:"column:model_type;not null" binding:"required"`
@@ -31,7 +31,7 @@ type Maas struct {
 }
 
 func (u *Maas) TableName() string {
-	return "model"
+	return "maas"
 }
 
 func NewMaas(attrs ...MaasAttrFunc) *Maas {

@@ -9,7 +9,7 @@ import (
 type IMessageService interface {
 	CreateQuestionMessage(newQuestion *Message) (*Message, error)
 	CreateModelAnswerMessage(newAnswer *Message) error
-	GetMaxSequenceNumber(conversationSessionID string) (int, error)
+	GetMaxSequenceNumber(conversationSessionID string, messageType MessageType) (int, error)
 }
 
 type MessageService struct {
@@ -17,8 +17,8 @@ type MessageService struct {
 	db   *gorm.DB
 }
 
-func (m *MessageService) GetMaxSequenceNumber(conversationSessionID string) (int, error) {
-	return m.repo.GetMaxSequenceNumber(conversationSessionID)
+func (m *MessageService) GetMaxSequenceNumber(conversationSessionID string, messageType MessageType) (int, error) {
+	return m.repo.GetMaxSequenceNumber(conversationSessionID, messageType)
 }
 
 func (m *MessageService) CreateQuestionMessage(newQuestion *Message) (*Message, error) {

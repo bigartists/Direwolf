@@ -1,3 +1,5 @@
+import type { IChat } from './ModelClass/BaseChat';
+
 export enum RoleTypes {
   user = 'user',
   assistant = 'assistant',
@@ -16,33 +18,16 @@ export const SAFTY_TEXT =
 
 export const ERR_TEXT = '抱歉，暂无法回答该问题。';
 
-export interface IChat {
-  // property
-
-  id: number; // fk，模型id
-  chatId: string; // 会话id
-  name: string; // 模型别名
-  model: string;
-  api_key: string;
-  base_url: string;
-  avatar: string;
-  messages: Array<{ content: string; role: string }>;
-  stream: boolean;
-  abortController: AbortController;
-  sessionStatus?: SessionStatuTypes;
-  // function
-  predict: (params: any, cb: (params?: any) => void) => Promise<any>;
-  abortPredict: (params?: any) => void;
-  // 遗漏的一个问题， predict时的四种不同的状态处理；还有返回的对话的渲染逻辑；
-}
-
 export interface IChatState {
   maxChatAdmittance: number;
   curChat: IChatProps;
   chatList: IChatProps[];
 }
 
-export type IChatProps = Omit<Omit<Omit<IChat, 'predict'>, 'abortPredict'>, 'abortController'>;
+export type IChatProps = Omit<
+  Omit<Omit<Omit<IChat, 'predict'>, 'abortPredict'>, 'abortController'>,
+  'getPrompt'
+>;
 
 export type IMultiChatProps = IChatProps & { context: string };
 

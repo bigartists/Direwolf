@@ -83,7 +83,7 @@ export function ModelNewForm({ open, onClose, onCreate }: Props) {
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogTitle>添加模型</DialogTitle>
+        <DialogTitle>添加Maas</DialogTitle>
 
         <DialogContent dividers>
           <Stack spacing={3}>

@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type IMessageRepo interface {
 	FindMessageByParams(conversationSessionID string, modelID int64, messageType MessageType) (*Message, error)
-	GetMaxSequenceNumber(conversationSessionID string) (int, error)
+	GetMaxSequenceNumber(conversationSessionID string, messageType MessageType) (int, error)
 	CreateMessage(message *Message) error
 }
 
@@ -25,10 +25,10 @@ func (m *MessageRepo) FindMessageByParams(conversationSessionID string, modelID 
 	return &question, err
 }
 
-func (m *MessageRepo) GetMaxSequenceNumber(conversationSessionID string) (int, error) {
+func (m *MessageRepo) GetMaxSequenceNumber(conversationSessionID string, messageType MessageType) (int, error) {
 	var maxSeq int
 	m.db.Model(&Message{}).
-		Where("conversation_session_id = ?", conversationSessionID).
+		Where("conversation_session_id = ? and message_type = ?", conversationSessionID, messageType).
 		Select("COALESCE(MAX(sequence_number), 0)").
 		Scan(&maxSeq)
 

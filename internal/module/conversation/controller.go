@@ -27,7 +27,15 @@ func (this *ConversationController) Create(c *gin.Context) {
 
 	result.Result(c.ShouldBindJSON(&req)).Unwrap()
 
-	conversation, err := this.service.CreateConversation(c, req)
+	userID := user.GetUserId(c)
+
+	if userID == 0 {
+		ret := utils.ResultWrapper(c)(nil, ErrorMessage.InValidUserId)(utils.Error)
+		c.JSON(400, ret)
+		return
+	}
+
+	conversation, err := this.service.CreateConversation(c, req, userID)
 	if err != nil {
 		ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
 		c.JSON(400, ret)

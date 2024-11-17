@@ -8,8 +8,6 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { _contacts, _notifications } from 'src/_mock';
-
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
 
@@ -27,7 +25,7 @@ import { HeaderSection } from '../core/header-section';
 import { StyledDivider, useNavColorVars } from './styles';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
-import { ConversationButton } from '../components/conversation-button';
+import { ConversationDrawer } from '../components/conversation-drawer';
 import { LanguagePopover } from '../components/language-popover';
 import { ContactsPopover } from '../components/contacts-popover';
 import { WorkspacesPopover } from '../components/workspaces-popover';
@@ -161,10 +159,10 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
                     { value: 'ar', label: 'Arabic', countryCode: 'SA' },
                   ]}
                 /> */}
+
                 {/* -- Notifications popover -- */}
-                <NotificationsDrawer data={_notifications} />
-                {/* -- Conversation -- */}
-                <ConversationButton />
+                {/* <NotificationsDrawer data={_notifications} /> */}
+
                 {/* -- Contacts popover -- */}
                 {/* <ContactsPopover data={_contacts} /> */}
                 {/* -- Settings button -- */}

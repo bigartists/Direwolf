@@ -95,7 +95,7 @@ type LLMRequest struct {
 }
 
 type CompletionResponse struct {
-	ModelId   int64                  `json:"model_id" binding:"required"`
+	MaasId    int64                  `json:"maas_id" binding:"required"`
 	Prompt    string                 `json:"prompt" binding:"required"`
 	Params    map[string]interface{} `json:"params" binding:"required"`
 	SessionId string                 `json:"session_id" binding:"required"`

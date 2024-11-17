@@ -15,13 +15,14 @@ import (
 
 type MaasBaseInfo struct {
 	Id       int64     `json:"id"`
-	Model    string    `json:"maas"`
+	Model    string    `json:"model"`
+	Name     string    `json:"name"`
 	Avatar   string    `json:"avatar"`
 	CreateAt time.Time `json:"create_time"`
 }
 
 type IMaasService interface {
-	GetMaasList(userId int64) ([]*Maas, error)
+	GetMaasList(userId int64) ([]*MaasBaseInfo, error)
 	GetMaasDetail(id int64) *result.ErrorResult
 	ImportMaas(model *MaasRequest, userId int64) (*Maas, error)
 	UpdateMaas(id int, model *Maas) *result.ErrorResult
@@ -36,19 +37,23 @@ type ModelService struct {
 	conversationService conversation.IConversationService
 }
 
-func (m *ModelService) GetMaasList(userId int64) ([]*Maas, error) {
+func (m *ModelService) GetMaasList(userId int64) ([]*MaasBaseInfo, error) {
 	modelList, err := m.repo.FindMaasList(userId)
-	//var modelBaseInfoList []*MaasBaseInfo
-	//for _, maas := range modelList {
-	//	modelBaseInfoList = append(modelBaseInfoList, &MaasBaseInfo{
-	//		Id:       maas.ID,
-	//		Model:    maas.Model,
-	//		Avatar:   maas.Avatar,
-	//		CreateAt: maas.CreateTime,
-	//	})
-	//}
-	//return modelBaseInfoList
-	return modelList, err
+	if err != nil {
+		return nil, err
+	}
+	var modelBaseInfoList []*MaasBaseInfo
+	for _, maas := range modelList {
+		modelBaseInfoList = append(modelBaseInfoList, &MaasBaseInfo{
+			Id:       maas.ID,
+			Model:    maas.Model,
+			Name:     maas.Name,
+			Avatar:   maas.Avatar,
+			CreateAt: maas.CreateTime,
+		})
+	}
+	return modelBaseInfoList, nil
+	//return modelList, err
 }
 
 func (m *ModelService) GetMaasDetail(id int64) *result.ErrorResult {
@@ -123,7 +128,7 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 		return
 	}
 
-	modelDetail, err := m.repo.FindMaasById(req.ModelId, &Maas{})
+	modelDetail, err := m.repo.FindMaasById(req.MaasId, &Maas{})
 	if err != nil {
 		ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
 		c.JSON(400, ret)
@@ -135,7 +140,7 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 	prompt := req.Prompt
 	params := req.Params
 	sessionId := req.SessionId
-	modelId := req.ModelId
+	maasId := req.MaasId
 	messageContext := req.Context
 
 	// SequenceNumber 有bug
@@ -150,7 +155,7 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 		message.WithConversationSessionID(sessionId),
 		message.WithMessageType(message.MessageTypes["User"]),
 		message.WithContent(prompt),
-		message.WithMaasID(&modelId),
+		message.WithMaasID(&maasId),
 		message.WithSequenceNumber(maxSeq+1),
 		message.WithContext(messageContext),
 		message.WithParentQuestionID(nil),
@@ -214,13 +219,13 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 		message.WithConversationSessionID(sessionId),
 		message.WithMessageType(message.MessageTypes["Assistant"]),
 		message.WithContent(fullResponse),
-		message.WithMaasID(&modelId),
+		message.WithMaasID(&maasId),
 		message.WithSequenceNumber(maxSeq+2),
 		message.WithContext(messageContext),
 		message.WithParentQuestionID(&parentQuestionID),
 	)
 	// 更新conversation 最后一条信息的时间；
-	err = m.messageService.CreateModelAnswerMessage(answer)
+	err = m.conversationService.CreateModelAnswerMessage(answer)
 	if err != nil {
 		//ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
 		//c.JSON(400, ret)
@@ -228,7 +233,6 @@ func (m *ModelService) Completion(c *gin.Context, req CompletionResponse, userId
 		return
 	}
 
-	println("fullResponse: ", fullResponse)
 }
 
 func (m *ModelService) InvokeMaas(ctx context.Context, req LLMRequest) (<-chan string, error) {

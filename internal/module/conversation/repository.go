@@ -11,7 +11,7 @@ import (
 type IConversationRepo interface {
 	CreateConversation(ctx context.Context, req *CreateConversationRequest, userId int64) (*Conversation, error)
 	GetConversationHistory(ctx context.Context, userID int64) ([]*Conversation, error)
-	GetConversationDetail(ctx context.Context, userID int64, conversationID int64) (*Conversation, error)
+	GetConversationDetail(ctx context.Context, userID int64, conversationSessionID string) (*Conversation, error)
 	IsConversationExist(ctx context.Context, conversationSessionID string) (bool, error)
 }
 
@@ -40,7 +40,7 @@ func (c *ConversationRepo) CreateConversation(ctx context.Context, req *CreateCo
 		}
 		// 关联模型创建
 		for _, maasID := range req.MaasIds {
-			convModel := &conversation_maas.ConversationModel{
+			convModel := &conversation_maas.ConversationMaas{
 				ConversationSessionID: conversation.SessionID,
 				MaasID:                maasID,
 				Status:                "active",
@@ -64,9 +64,10 @@ func (c *ConversationRepo) GetConversationHistory(ctx context.Context, userID in
 	return conversations, err
 }
 
-func (c *ConversationRepo) GetConversationDetail(ctx context.Context, userID int64, conversationID int64) (*Conversation, error) {
+func (c *ConversationRepo) GetConversationDetail(ctx context.Context, userID int64, conversationSessionID string) (*Conversation, error) {
 	var conversation Conversation
-	err := c.db.Preload("Models").First(&conversation, conversationID).Error
+	err := c.db.Preload("Maas").
+		Where("user_id=? AND session_id=?", userID, conversationSessionID).First(&conversation).Error
 	if err != nil {
 		return nil, err
 	}

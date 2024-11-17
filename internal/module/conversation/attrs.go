@@ -33,9 +33,9 @@ func WithStatus(status ConversationStatus) ConversationAttrFunc {
 	}
 }
 
-func WithModels(models []*conversation_maas.ConversationModel) ConversationAttrFunc {
+func WithMaas(maas []*conversation_maas.ConversationMaas) ConversationAttrFunc {
 	return func(c *Conversation) {
-		c.Models = models
+		c.Maas = maas
 	}
 }
 

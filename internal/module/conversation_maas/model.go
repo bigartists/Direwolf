@@ -2,7 +2,7 @@ package conversation_maas
 
 import "time"
 
-type ConversationModel struct {
+type ConversationMaas struct {
 	ID                    int64     `json:"id" gorm:"column:id;primaryKey;autoIncrement"`
 	ConversationSessionID string    `json:"conversation_session_id" gorm:"column:conversation_session_id;not null"`
 	MaasID                int64     `json:"maas_id" gorm:"column:maas_id;not null"`
@@ -11,6 +11,6 @@ type ConversationModel struct {
 	UpdateTime            time.Time `json:"update_time" gorm:"column:update_time;autoUpdateTime;type:datetime(0);"`
 }
 
-func (cm *ConversationModel) TableName() string {
+func (cm *ConversationMaas) TableName() string {
 	return "conversation_maas"
 }

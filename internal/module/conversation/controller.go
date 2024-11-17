@@ -70,8 +70,8 @@ func (this *ConversationController) GetConversationDetail(c *gin.Context) {
 		c.JSON(400, ret)
 		return
 	}
-	conversationID := c.GetInt64("id")
-	detail, err := this.service.GetConversationDetail(c, userID, conversationID)
+	session_id := c.Param("id")
+	detail, err := this.service.GetConversationDetail(c, userID, session_id)
 	if err != nil {
 		ret := utils.ResultWrapper(c)(nil, err.Error())(utils.Error)
 		c.JSON(400, ret)

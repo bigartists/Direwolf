@@ -32,7 +32,7 @@ func (m MaasRepo) FindMaasList(userId int64) ([]*Maas, error) {
 
 func (m MaasRepo) CheckDuplicateMaasBaseURL(ctx context.Context, model string, baseURL string) (bool, error) {
 	var count int64
-	err := m.db.Model(&Maas{}).Where("model=? AND base_url=?", model, baseURL).Count(&count).Error
+	err := m.db.Model(&Maas{}).Where("maas=? AND base_url=?", model, baseURL).Count(&count).Error
 	return count > 0, err
 }
 

@@ -28,7 +28,7 @@ const ChatTrigger = ({ query, setQuery, trigger, newContext, isShowNewContext }:
   };
 
   return (
-    <div className="w-full flex-shrink-0 max-w-screen-lg">
+    <div className=" flex-shrink-0 w-[768px]">
       <div className="flex justify-start mb-2 ">
         {isShowNewContext ? (
           <Button

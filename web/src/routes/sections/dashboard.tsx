@@ -10,7 +10,7 @@ import { AuthGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
-const IndexPage = lazy(() => import('src/pages/dashboard/one'));
+const IndexPage = lazy(() => import('src/pages/dashboard/chat'));
 const PageModels = lazy(() => import('src/pages/dashboard/maas'));
 const PageThree = lazy(() => import('src/pages/dashboard/three'));
 const PageFour = lazy(() => import('src/pages/dashboard/four'));

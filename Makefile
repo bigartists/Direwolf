@@ -20,7 +20,7 @@ web-release: check-nvm
 	cd $(WEB_SRC_DIR) && \
 		. $(HOME)/.nvm/nvm.sh && \
 		sleep 1;\
-		nvm use v20.16.0 && \
+		nvm use v22.11.0 && \
 		sleep 1;\
 		npm run release
 
@@ -31,7 +31,7 @@ web: check-nvm
 	cd $(WEB_SRC_DIR) && \
 		. $(HOME)/.nvm/nvm.sh && \
 		sleep 1;\
-		nvm use v20.16.0 && \
+		nvm use v22.11.0 && \
 		sleep 1;\
 		npm run dev
 
@@ -47,9 +47,9 @@ run:
 dev:
 	@echo "Starting both backend and frontend services..."
 	@trap 'kill 0' EXIT; \
-	( make web & \
+	( make run & \
 	  sleep 2; \
-	  make run & \
+	  make web & \
 	  wait )
 
 

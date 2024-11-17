@@ -28,7 +28,7 @@ func InitializeApp() (*server.App, error) {
 	iMessageRepo := message.ProvideMessageRepo(db)
 	iMessageService := message.ProvideMessageService(iMessageRepo, db)
 	iConversationRepo := conversation.ProvideConversationRepo(db)
-	iConversationService := conversation.ProvideConversationService(iConversationRepo)
+	iConversationService := conversation.ProvideConversationService(iConversationRepo, iMessageRepo, db)
 	iMaasService := maas.ProvideMaasService(iModelRepo, iMessageService, iConversationService)
 	maasController := maas.ProvideMaasController(iMaasService)
 	conversationController := conversation.ProvideConversationController(iConversationService)

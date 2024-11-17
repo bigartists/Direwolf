@@ -110,6 +110,8 @@ export const endpoints = {
 
   conversation: {
     create: '/conversation/create',
+    list: '/conversations',
+    get: (session_id: string | number) => `/conversation/${session_id}`,
   },
 
   product: {

@@ -8,8 +8,6 @@ import { SvgColor } from 'src/components/svg-color';
 
 const icon = (name: string) => {
   const src = `${CONFIG.assetsDir}/assets/icons/navbar/${name}.svg`;
-  console.log('🚀 ~ icon ~ src:', src);
-
   return <SvgColor src={src} />;
 };
 
@@ -40,8 +38,37 @@ export const ICONS = {
   analytics: icon('ic-analytics'),
   dashboard: icon('ic-dashboard'),
   parameter: icon('ic-parameter'),
+  history: icon('history'),
 };
 
+export const ICONS_SRC = {
+  job: `${CONFIG.assetsDir}/assets/icons/navbar/ic-job.svg`,
+  blog: `${CONFIG.assetsDir}/assets/icons/navbar/ic-blog.svg`,
+  chat: `${CONFIG.assetsDir}/assets/icons/navbar/ic-chat.svg`,
+  mail: `${CONFIG.assetsDir}/assets/icons/navbar/ic-mail.svg`,
+  user: `${CONFIG.assetsDir}/assets/icons/navbar/ic-user.svg`,
+  file: `${CONFIG.assetsDir}/assets/icons/navbar/ic-file.svg`,
+  lock: `${CONFIG.assetsDir}/assets/icons/navbar/ic-lock.svg`,
+  tour: `${CONFIG.assetsDir}/assets/icons/navbar/ic-tour.svg`,
+  order: `${CONFIG.assetsDir}/assets/icons/navbar/ic-order.svg`,
+  label: `${CONFIG.assetsDir}/assets/icons/navbar/ic-label.svg`,
+  blank: `${CONFIG.assetsDir}/assets/icons/navbar/ic-blank.svg`,
+  kanban: `${CONFIG.assetsDir}/assets/icons/navbar/ic-kanban.svg`,
+  folder: `${CONFIG.assetsDir}/assets/icons/navbar/ic-folder.svg`,
+  course: `${CONFIG.assetsDir}/assets/icons/navbar/ic-course.svg`,
+  banking: `${CONFIG.assetsDir}/assets/icons/navbar/ic-banking.svg`,
+  booking: `${CONFIG.assetsDir}/assets/icons/navbar/ic-booking.svg`,
+  invoice: `${CONFIG.assetsDir}/assets/icons/navbar/ic-invoice.svg`,
+  product: `${CONFIG.assetsDir}/assets/icons/navbar/ic-product.svg`,
+  calendar: `${CONFIG.assetsDir}/assets/icons/navbar/ic-calendar.svg`,
+  disabled: `${CONFIG.assetsDir}/assets/icons/navbar/ic-disabled.svg`,
+  external: `${CONFIG.assetsDir}/assets/icons/navbar/ic-external.svg`,
+  menuItem: `${CONFIG.assetsDir}/assets/icons/navbar/ic-menu-item.svg`,
+  ecommerce: `${CONFIG.assetsDir}/assets/icons/navbar/ic-ecommerce.svg`,
+  analytics: `${CONFIG.assetsDir}/assets/icons/navbar/ic-analytics.svg`,
+  dashboard: `${CONFIG.assetsDir}/assets/icons/navbar/ic-dashboard.svg`,
+  parameter: `${CONFIG.assetsDir}/assets/icons/navbar/ic-parameter.svg`,
+};
 // ----------------------------------------------------------------------
 
 export const navData = [

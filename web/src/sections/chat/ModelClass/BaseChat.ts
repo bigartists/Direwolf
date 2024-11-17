@@ -28,7 +28,7 @@ export default class Chat implements IChat {
 
   model: string;
 
-  model_id: number;
+  maas_id: number;
 
   stream: boolean;
 
@@ -46,7 +46,7 @@ export default class Chat implements IChat {
 
   constructor(props: IChatProps) {
     this.id = props.id;
-    this.model_id = props.id;
+    this.maas_id = props.id;
     this.stream = props.stream;
     this.session_id = props.session_id;
     this.model = props.model;
@@ -74,7 +74,7 @@ export default class Chat implements IChat {
   async predict(params: any, cb: (params?: any, options?: any) => void): Promise<any> {
     const token = await this.getToken();
     const newParams = {
-      model_id: params.model_id,
+      maas_id: params.maas_id,
       prompt: this.getPrompt(params.messages),
       session_id: params.session_id,
       context: JSON.stringify(params.messages),

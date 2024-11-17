@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { ModelView } from 'src/sections/model/view';
+import { ModelView } from 'src/sections/maas/view';
 
 // ----------------------------------------------------------------------
 
